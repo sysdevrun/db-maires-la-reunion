@@ -70,22 +70,29 @@ def validate_cities(rows, fieldnames):
 def validate_mayors(rows, fieldnames):
     errors = []
 
-    expected = {"last_name", "first_name", "birth_date"}
+    expected = {"last_name", "first_name", "birth_date", "gender"}
     missing = expected - set(fieldnames)
     if missing:
         errors.append(f"mayors.csv: missing columns: {', '.join(sorted(missing))}")
         return errors
 
+    valid_genders = {"M", "F", "unknown"}
     seen_names = set()
     for i, row in enumerate(rows, start=2):
         last_name = row.get("last_name", "").strip()
         first_name = row.get("first_name", "").strip()
         birth_date = row.get("birth_date", "").strip()
+        gender = row.get("gender", "").strip()
 
         if not last_name:
             errors.append(f"  Row {i}: empty last_name")
         if not first_name:
             errors.append(f"  Row {i}: empty first_name")
+
+        if not gender:
+            errors.append(f"  Row {i}: empty gender")
+        elif gender not in valid_genders:
+            errors.append(f"  Row {i}: gender '{gender}' is not one of {', '.join(sorted(valid_genders))}")
 
         if last_name and first_name:
             name_key = (last_name.lower(), first_name.lower())

@@ -22,6 +22,7 @@ Informations biographiques des maires.
 | `last_name` | oui | Nom de famille |
 | `first_name` | oui | Prénom(s) |
 | `birth_date` | non | Date de naissance (`AAAA-MM-JJ`, vide si inconnue) |
+| `gender` | oui | Genre : `M` (homme), `F` (femme) ou `unknown` (inconnu) |
 
 ### `data/mayors_by_city.csv`
 
