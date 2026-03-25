@@ -121,6 +121,7 @@ def validate_mayors_by_city(rows, fieldnames, city_ids, mayor_names, mayor_birth
     referenced_city_ids = set()
     referenced_mayor_names = set()
     mandates_by_city = {}
+    mandates_by_mayor = {}
 
     for i, row in enumerate(rows, start=2):
         city_id = row.get("city_id", "").strip()
@@ -164,6 +165,9 @@ def validate_mayors_by_city(rows, fieldnames, city_ids, mayor_names, mayor_birth
         if city_id and start_d is not None:
             mandates_by_city.setdefault(city_id, []).append((start_d, end_d, i))
 
+        if mayor_name and start_d is not None:
+            mandates_by_mayor.setdefault(mayor_name, []).append((start_d, end_d, i))
+
     # Check for overlapping mandates per city
     for city_id, mandates in mandates_by_city.items():
         mandates.sort(key=lambda m: m[0])
@@ -174,6 +178,26 @@ def validate_mayors_by_city(rows, fieldnames, city_ids, mayor_names, mayor_birth
                 errors.append(
                     f"  Rows {prev_row} & {curr_row}: overlapping mandates for city '{city_id}' "
                     f"({prev_start} - {prev_end or 'ongoing'} vs {curr_start} - {curr_end or 'ongoing'})"
+                )
+
+    # Check mayor age at first mandate start (>= 18) and last mandate end (<= 100)
+    for mayor_name, mandates in mandates_by_mayor.items():
+        if mayor_name not in mayor_birth_dates:
+            continue
+        birth_d = mayor_birth_dates[mayor_name]
+        mandates.sort(key=lambda m: m[0])
+        first_start = mandates[0][0]
+        age_at_start = (first_start - birth_d).days / 365.25
+        if age_at_start < 18:
+            errors.append(
+                f"  Mayor '{mayor_name}': age {age_at_start:.0f} at first mandate start ({first_start}), must be >= 18"
+            )
+        last_end = mandates[-1][1]
+        if last_end is not None:
+            age_at_end = (last_end - birth_d).days / 365.25
+            if age_at_end > 100:
+                errors.append(
+                    f"  Mayor '{mayor_name}': age {age_at_end:.0f} at last mandate end ({last_end}), must be <= 100"
                 )
 
     # Check orphan mayors (in mayors.csv but never referenced)
