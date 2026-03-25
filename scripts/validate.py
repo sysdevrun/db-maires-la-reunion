@@ -41,6 +41,7 @@ def validate_cities(rows, fieldnames):
         return errors  # Can't validate rows without correct columns
 
     seen_ids = set()
+    seen_names = set()
     for i, row in enumerate(rows, start=2):  # Row 2 = first data row (header is row 1)
         city_id = row.get("city_id", "").strip()
         name = row.get("name", "").strip()
@@ -56,6 +57,12 @@ def validate_cities(rows, fieldnames):
 
         if not name:
             errors.append(f"  Row {i}: empty name")
+        else:
+            name_key = name.lower()
+            if name_key in seen_names:
+                errors.append(f"  Row {i}: duplicate city name '{name}'")
+            else:
+                seen_names.add(name_key)
 
     if errors:
         errors.insert(0, "cities.csv:")
@@ -72,6 +79,7 @@ def validate_mayors(rows, fieldnames):
         return errors
 
     seen_ids = set()
+    seen_names = set()
     for i, row in enumerate(rows, start=2):
         mayor_id = row.get("mayor_id", "").strip()
         last_name = row.get("last_name", "").strip()
@@ -91,6 +99,13 @@ def validate_mayors(rows, fieldnames):
             errors.append(f"  Row {i}: empty last_name")
         if not first_name:
             errors.append(f"  Row {i}: empty first_name")
+
+        if last_name and first_name:
+            name_key = (last_name.lower(), first_name.lower())
+            if name_key in seen_names:
+                errors.append(f"  Row {i}: duplicate mayor name '{first_name} {last_name}'")
+            else:
+                seen_names.add(name_key)
 
         if birth_date:
             parse_date(birth_date, "birth_date", i, errors)
