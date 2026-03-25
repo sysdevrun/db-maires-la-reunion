@@ -102,7 +102,7 @@ def validate_mayors(rows, fieldnames):
     return errors
 
 
-def validate_mayors_by_city(rows, fieldnames, city_ids, mayor_names):
+def validate_mayors_by_city(rows, fieldnames, city_ids, mayor_names, mayor_birth_dates):
     errors = []
 
     expected = {"city_id", "mayor_name", "start_date", "end_date"}
@@ -147,6 +147,12 @@ def validate_mayors_by_city(rows, fieldnames, city_ids, mayor_names):
             end_d = parse_date(end_date_str, "end_date", i, errors)
             if start_d and end_d and end_d < start_d:
                 errors.append(f"  Row {i}: end_date ({end_date_str}) is before start_date ({start_date_str})")
+
+        # Check birthdate is before mandate start
+        if mayor_name and start_d and mayor_name in mayor_birth_dates:
+            birth_d = mayor_birth_dates[mayor_name]
+            if birth_d >= start_d:
+                errors.append(f"  Row {i}: mayor '{mayor_name}' birth_date ({birth_d}) is not before start_date ({start_d})")
 
         if city_id and start_d is not None:
             mandates_by_city.setdefault(city_id, []).append((start_d, end_d, i))
@@ -204,13 +210,22 @@ def main():
 
     # Build sets for referential integrity
     city_ids = {row["city_id"].strip() for row in cities if row.get("city_id", "").strip()}
-    mayor_names = {
-        f"{row['first_name'].strip()} {row['last_name'].strip()}"
-        for row in mayors
-        if row.get("first_name", "").strip() and row.get("last_name", "").strip()
-    }
+    mayor_names = set()
+    mayor_birth_dates = {}
+    for row in mayors:
+        first = row.get("first_name", "").strip()
+        last = row.get("last_name", "").strip()
+        if first and last:
+            name = f"{first} {last}"
+            mayor_names.add(name)
+            bd = row.get("birth_date", "").strip()
+            if bd:
+                try:
+                    mayor_birth_dates[name] = date.fromisoformat(bd)
+                except ValueError:
+                    pass  # Already caught by validate_mayors
 
-    all_errors.extend(validate_mayors_by_city(mandates, mandates_fields, city_ids, mayor_names))
+    all_errors.extend(validate_mayors_by_city(mandates, mandates_fields, city_ids, mayor_names, mayor_birth_dates))
 
     if all_errors:
         print("Validation FAILED:\n")
