@@ -27,7 +27,7 @@ jobs:
           cache: npm
           cache-dependency-path: website/package-lock.json
       - run: cd website && npm ci && npm run build
-      - uses: actions/configure-pages@v6
+      - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v4
         with:
           path: website/dist
