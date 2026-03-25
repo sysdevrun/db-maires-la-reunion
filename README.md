@@ -1,5 +1,7 @@
 # Base de données des maires de La Réunion
 
+**[Consulter le site web](https://sysdevrun.github.io/db-maires-la-reunion/)**
+
 Données publiques sur les communes et maires de La Réunion (département 974).
 
 ## Fichiers
