@@ -19,8 +19,10 @@ You are given text (typically from Wikipedia or a similar source) describing the
 ## CSV file locations (relative to repo root)
 
 - `data/cities.csv` — columns: `city_id,name`
-- `data/mayors.csv` — columns: `mayor_id,last_name,first_name,birth_date`
-- `data/mayors_by_city.csv` — columns: `city_id,mayor_id,start_date,end_date`
+- `data/mayors.csv` — columns: `last_name,first_name,birth_date`
+- `data/mayors_by_city.csv` — columns: `city_id,mayor_name,start_date,end_date`
+
+Mayors are identified by their full name (`first_name` + space + `last_name`). The `mayor_name` column in `mayors_by_city.csv` must match exactly `first_name + " " + last_name` from `mayors.csv`.
 
 ## Step-by-step process
 
@@ -76,12 +78,14 @@ Read all three CSV files to understand current state.
 For each mayor extracted:
 - Search by `last_name` AND `first_name` (case-insensitive match).
 - If found: update `birth_date` if we now have one and the existing value is empty. Do NOT overwrite an existing birth_date.
-- If not found: assign a new `mayor_id`. Find the highest existing M-prefixed ID and increment by 1 (e.g., if M0003 exists, next is M0004). Add the new row.
+- If not found: add a new row.
+- Sort `mayors.csv` alphabetically by `last_name`, then `first_name`.
 
 ### 5. Upsert mandates into `data/mayors_by_city.csv`
 
 For each mandate extracted:
-- Search for an existing row matching `city_id` + `mayor_id` + `start_date`.
+- Build `mayor_name` as `first_name + " " + last_name` (matching exactly what's in mayors.csv).
+- Search for an existing row matching `city_id` + `mayor_name` + `start_date`.
 - If found: update `end_date` if we have new information.
 - If not found: add a new row.
 
@@ -92,7 +96,7 @@ Write the updated CSV files. Preserve:
 - No trailing whitespace
 - A final newline after the last row
 - Sort `cities.csv` by `city_id`
-- Sort `mayors.csv` by `mayor_id`
+- Sort `mayors.csv` by `last_name`, then `first_name`
 - Sort `mayors_by_city.csv` by `city_id`, then `start_date`
 
 ### 7. Validate
@@ -103,6 +107,7 @@ Run `python3 scripts/validate.py` and report the result. If validation fails, fi
 
 - NEVER delete existing data. Only add or update.
 - If the text is ambiguous about a person's identity (same last name, different first name), treat them as different people.
+- If a same-name father/son situation arises, disambiguate by adding "(fils)" to the first name of the younger one.
 - If a mayor served multiple non-consecutive terms, create separate mandate rows.
-- Always double-check that foreign keys are consistent before writing.
+- Always double-check that `mayor_name` in mayors_by_city.csv matches exactly `first_name + " " + last_name` from mayors.csv.
 - Show the user a summary of changes made (new cities, new mayors, new/updated mandates).

@@ -19,7 +19,6 @@ Informations biographiques des maires.
 
 | Colonne | Obligatoire | Description |
 |---------|-------------|-------------|
-| `mayor_id` | oui | Identifiant unique (`M0001`, `M0002`, …) |
 | `last_name` | oui | Nom de famille |
 | `first_name` | oui | Prénom(s) |
 | `birth_date` | non | Date de naissance (`AAAA-MM-JJ`, vide si inconnue) |
@@ -31,7 +30,7 @@ Mandats de maires par commune.
 | Colonne | Obligatoire | Description |
 |---------|-------------|-------------|
 | `city_id` | oui | Code INSEE → `cities.csv` |
-| `mayor_id` | oui | Identifiant → `mayors.csv` |
+| `mayor_name` | oui | Prénom + Nom → `mayors.csv` |
 | `start_date` | oui | Début du mandat (`AAAA-MM-JJ`) |
 | `end_date` | non | Fin du mandat (`AAAA-MM-JJ`, vide = en cours) |
 
