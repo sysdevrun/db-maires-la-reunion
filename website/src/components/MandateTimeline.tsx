@@ -63,6 +63,9 @@ const ELECTION_FIRST_ROUNDS = [
   '2014-03-23', '2020-03-15', '2026-03-15',
 ]
 
+// Elections whose label should be hidden (line still drawn)
+const HIDDEN_LABELS = new Set(['1945-04-29'])
+
 const ROW_HEIGHT = 36
 const BAR_HEIGHT = 20
 const LABEL_WIDTH = 180
@@ -90,12 +93,11 @@ export default function MandateTimeline({ mandates }: Props) {
 
   const chartHeight = sequences.length * ROW_HEIGHT + TOP_MARGIN + BOTTOM_MARGIN
 
-  const yearRange = maxYear - minYear
-  const tickStep = yearRange <= 20 ? 5 : 10
-  const tickYears: number[] = []
-  for (let y = Math.ceil(minYear / tickStep) * tickStep; y <= maxYear; y += tickStep) {
-    tickYears.push(y)
-  }
+  // Filter election dates to those visible in the chart range
+  const visibleElections = ELECTION_FIRST_ROUNDS.filter((dateStr) => {
+    const year = new Date(dateStr).getFullYear()
+    return year >= minYear && year <= maxYear
+  })
 
   function yearToFraction(year: number) {
     return (year - minYear) / (maxYear - minYear)
@@ -139,11 +141,13 @@ export default function MandateTimeline({ mandates }: Props) {
         viewBox={`0 0 800 ${chartHeight}`}
         style={{ minWidth: 600, display: 'block' }}
       >
-        {/* X-axis ticks */}
-        {tickYears.map((year) => {
-          const x = LABEL_WIDTH + yearToFraction(year) * (800 - LABEL_WIDTH - RIGHT_MARGIN)
+        {/* Election year ticks */}
+        {visibleElections.map((dateStr) => {
+          const d = new Date(dateStr)
+          const frac = dateToFraction(d)
+          const x = LABEL_WIDTH + frac * (800 - LABEL_WIDTH - RIGHT_MARGIN)
           return (
-            <g key={year}>
+            <g key={dateStr}>
               <line
                 x1={x}
                 y1={TOP_MARGIN}
@@ -156,33 +160,12 @@ export default function MandateTimeline({ mandates }: Props) {
                 x={x}
                 y={chartHeight - BOTTOM_MARGIN + 18}
                 textAnchor="middle"
-                fontSize={12}
+                fontSize={11}
                 fill="#6b7280"
               >
-                {year}
+                {HIDDEN_LABELS.has(dateStr) ? '' : d.getFullYear()}
               </text>
             </g>
-          )
-        })}
-
-        {/* Election date vertical lines */}
-        {ELECTION_FIRST_ROUNDS.map((dateStr) => {
-          const d = new Date(dateStr)
-          const frac = dateToFraction(d)
-          if (frac < 0 || frac > 1) return null
-          const x = LABEL_WIDTH + frac * (800 - LABEL_WIDTH - RIGHT_MARGIN)
-          return (
-            <line
-              key={dateStr}
-              x1={x}
-              y1={TOP_MARGIN}
-              x2={x}
-              y2={chartHeight - BOTTOM_MARGIN}
-              stroke="#6b7280"
-              strokeWidth={0.75}
-              strokeDasharray="4 3"
-              opacity={0.5}
-            />
           )
         })}
 
