@@ -1,12 +1,12 @@
 import { useParams, Link } from 'react-router-dom'
 import { useEffect } from 'react'
-import { getMayorByKey, getMandatesForMayor, getCityById, mayorFullName } from '../data/loader'
+import { getMayorByKey, getMandatesForMayor, getCityById, mayorFullName, citySlug } from '../data/loader'
 import { formatDate, computeDuration } from '../utils/format'
 import GenderBadge from '../components/GenderBadge'
 
 export default function MayorPage() {
   const { name } = useParams<{ name: string }>()
-  const mayor = name ? getMayorByKey(decodeURIComponent(name)) : undefined
+  const mayor = name ? getMayorByKey(name) : undefined
 
   useEffect(() => {
     if (mayor) {
@@ -66,7 +66,7 @@ export default function MayorPage() {
                   <td className="py-3 px-4">
                     {city ? (
                       <Link
-                        to={`/commune/${encodeURIComponent(city.name)}`}
+                        to={`/commune/${citySlug(city.name)}`}
                         className="text-blue-600 hover:underline"
                       >
                         {city.name}

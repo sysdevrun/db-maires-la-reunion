@@ -1,13 +1,13 @@
 import { useParams, Link } from 'react-router-dom'
 import { useEffect } from 'react'
-import { getCityByName, getMandatesForCity, findMayorByFullName, mayorKey } from '../data/loader'
+import { getCityBySlug, getMandatesForCity, findMayorByFullName, mayorSlug } from '../data/loader'
 import { formatDate, computeDuration } from '../utils/format'
 import GenderBadge from '../components/GenderBadge'
 import MandateTimeline from '../components/MandateTimeline'
 
 export default function CityPage() {
   const { name } = useParams<{ name: string }>()
-  const city = name ? getCityByName(decodeURIComponent(name)) : undefined
+  const city = name ? getCityBySlug(name) : undefined
 
   useEffect(() => {
     if (city) {
@@ -63,7 +63,7 @@ export default function CityPage() {
                       {mayor && <GenderBadge gender={mayor.gender} />}
                       {mayor ? (
                         <Link
-                          to={`/maire/${encodeURIComponent(mayorKey(mayor))}`}
+                          to={`/maire/${mayorSlug(mayor)}`}
                           className="text-blue-600 hover:underline"
                         >
                           {m.mayorName}

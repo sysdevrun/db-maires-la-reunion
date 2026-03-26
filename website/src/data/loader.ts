@@ -57,26 +57,35 @@ export const mayors = loadMayors()
 export const mandates = loadMandates()
 
 const cityByName = new Map(cities.map(c => [c.name, c]))
+const cityBySlug = new Map(cities.map(c => [citySlug(c.name), c]))
 const cityById = new Map(cities.map(c => [c.cityId, c]))
 
 export function getCityByName(name: string): City | undefined {
   return cityByName.get(name)
 }
 
+export function getCityBySlug(slug: string): City | undefined {
+  return cityBySlug.get(slug)
+}
+
 export function getCityById(id: string): City | undefined {
   return cityById.get(id)
 }
 
+export function citySlug(name: string): string {
+  return name.replace(/ /g, '-')
+}
+
+export function mayorSlug(m: Mayor): string {
+  return `${m.firstName}-${m.lastName}`.replace(/ /g, '-')
+}
+
 export function getMayorByKey(key: string): Mayor | undefined {
-  const sepIndex = key.indexOf('_')
-  if (sepIndex < 0) return undefined
-  const firstName = key.slice(0, sepIndex)
-  const lastName = key.slice(sepIndex + 1)
-  return mayors.find(m => m.firstName === firstName && m.lastName === lastName)
+  return mayors.find(m => mayorSlug(m) === key)
 }
 
 export function mayorKey(m: Mayor): string {
-  return `${m.firstName}_${m.lastName}`
+  return mayorSlug(m)
 }
 
 export function mayorFullName(m: Mayor): string {
@@ -116,7 +125,7 @@ export function searchAll(query: string): SearchResult[] {
     .map(c => ({
       type: 'city' as const,
       label: c.name,
-      link: `/commune/${encodeURIComponent(c.name)}`,
+      link: `/commune/${citySlug(c.name)}`,
     }))
 
   const mayorResults: SearchResult[] = mayors
@@ -128,7 +137,7 @@ export function searchAll(query: string): SearchResult[] {
     .map(m => ({
       type: 'mayor' as const,
       label: `${m.firstName} ${m.lastName}`,
-      link: `/maire/${encodeURIComponent(mayorKey(m))}`,
+      link: `/maire/${mayorSlug(m)}`,
       gender: m.gender,
     }))
 
@@ -201,7 +210,7 @@ export function computeTrivia(): TriviaFact[] {
     value: `${Math.round(longestYears)} ans`,
     label: longestName,
     sublabel: 'Plus longue carrière',
-    link: longestMayor ? `/maire/${encodeURIComponent(mayorKey(longestMayor))}` : undefined,
+    link: longestMayor ? `/maire/${mayorSlug(longestMayor)}` : undefined,
   })
 
   // Youngest mayor at election
@@ -224,7 +233,7 @@ export function computeTrivia(): TriviaFact[] {
     value: `${Math.floor(youngestAge)} ans`,
     label: youngestName,
     sublabel: 'Plus jeune maire élu',
-    link: youngestMayor ? `/maire/${encodeURIComponent(mayorKey(youngestMayor))}` : undefined,
+    link: youngestMayor ? `/maire/${mayorSlug(youngestMayor)}` : undefined,
   })
 
   // Oldest mayor at election
@@ -247,7 +256,7 @@ export function computeTrivia(): TriviaFact[] {
     value: `${Math.floor(oldestAge)} ans`,
     label: oldestName,
     sublabel: 'Maire le plus âgé à son élection',
-    link: oldestMayor ? `/maire/${encodeURIComponent(mayorKey(oldestMayor))}` : undefined,
+    link: oldestMayor ? `/maire/${mayorSlug(oldestMayor)}` : undefined,
   })
 
   // Mayor with most mandates
@@ -265,7 +274,7 @@ export function computeTrivia(): TriviaFact[] {
     value: `${mostMandatesCount} mandats`,
     label: mostMandatesName,
     sublabel: 'Plus grand nombre de mandats',
-    link: mostMandatesMayor ? `/maire/${encodeURIComponent(mayorKey(mostMandatesMayor))}` : undefined,
+    link: mostMandatesMayor ? `/maire/${mayorSlug(mostMandatesMayor)}` : undefined,
   })
 
   // City with most different mayors
@@ -284,7 +293,7 @@ export function computeTrivia(): TriviaFact[] {
     value: `${mostMayorsCount} maires`,
     label: mostMayorsCity?.name ?? mostMayorsCityId,
     sublabel: 'Commune avec le plus de maires',
-    link: mostMayorsCity ? `/commune/${encodeURIComponent(mostMayorsCity.name)}` : undefined,
+    link: mostMayorsCity ? `/commune/${citySlug(mostMayorsCity.name)}` : undefined,
   })
 
   // Oldest mandate on record
@@ -296,7 +305,7 @@ export function computeTrivia(): TriviaFact[] {
     value: oldestMandate.startDate.slice(0, 4),
     label: oldestMandate.mayorName,
     sublabel: `Plus ancien mandat recensé (${oldestCity?.name ?? ''})`,
-    link: oldestCity ? `/commune/${encodeURIComponent(oldestCity.name)}` : undefined,
+    link: oldestCity ? `/commune/${citySlug(oldestCity.name)}` : undefined,
   })
 
   return facts

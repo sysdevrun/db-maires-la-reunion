@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { cities, getMandatesForCity } from '../data/loader'
+import { cities, getMandatesForCity, citySlug } from '../data/loader'
 
 export default function CitiesPage() {
   const sorted = [...cities].sort((a, b) => a.name.localeCompare(b.name, 'fr'))
@@ -16,7 +16,7 @@ export default function CitiesPage() {
           return (
             <Link
               key={city.cityId}
-              to={`/commune/${encodeURIComponent(city.name)}`}
+              to={`/commune/${citySlug(city.name)}`}
               className="block p-4 rounded-xl border border-gray-200 hover:border-blue-300 hover:bg-blue-50 transition-colors"
             >
               <div className="font-semibold text-gray-800">{city.name}</div>
