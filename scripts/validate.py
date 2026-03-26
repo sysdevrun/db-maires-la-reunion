@@ -9,6 +9,8 @@ from pathlib import Path
 
 DATA_DIR = Path(__file__).resolve().parent.parent / "data"
 
+from election_dates import ELECTIONS
+
 CITY_ID_RE = re.compile(r"^974\d{2}$")
 
 
@@ -179,6 +181,18 @@ def validate_mayors_by_city(rows, fieldnames, city_ids, mayor_names, mayor_birth
                     f"  Rows {prev_row} & {curr_row}: overlapping mandates for city '{city_id}' "
                     f"({prev_start} - {prev_end or 'ongoing'} vs {curr_start} - {curr_end or 'ongoing'})"
                 )
+
+    # Check that no mandate spans an entire election (both rounds inside it)
+    for city_id, mandates in mandates_by_city.items():
+        for start_d, end_d, row_num in mandates:
+            if end_d is None:
+                continue
+            for year, r1, r2 in ELECTIONS:
+                if start_d < r1 and r2 < end_d:
+                    errors.append(
+                        f"  Row {row_num}: mandate in city '{city_id}' ({start_d} - {end_d}) "
+                        f"spans entire {year} election ({r1} - {r2})"
+                    )
 
     # Check mayor age at first mandate start (>= 18) and last mandate end (<= 100)
     for mayor_name, mandates in mandates_by_mayor.items():
