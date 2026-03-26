@@ -110,4 +110,5 @@ Run `python3 scripts/validate.py` and report the result. If validation fails, fi
 - If a same-name father/son situation arises, disambiguate by adding "(fils)" to the first name of the younger one.
 - If a mayor served multiple non-consecutive terms, create separate mandate rows.
 - Always double-check that `mayor_name` in mayors_by_city.csv matches exactly `first_name + " " + last_name` from mayors.csv.
+- Each mandate row should represent a single election cycle. If a mayor served continuously across multiple election cycles, create separate rows split at election first-round dates. Run `python3 scripts/split_mandates.py` after upserting to ensure proper splitting.
 - Show the user a summary of changes made (new cities, new mayors, new/updated mandates).
