@@ -54,6 +54,15 @@ interface TooltipState {
   highlightIndex: number | null // null = show all (label hover)
 }
 
+// First-round dates of French municipal elections (La Réunion)
+const ELECTION_FIRST_ROUNDS = [
+  '1900-05-06', '1904-05-01', '1908-05-03', '1912-05-05', '1919-11-30',
+  '1925-05-03', '1929-05-05', '1935-05-05', '1945-04-29', '1947-10-19',
+  '1953-04-26', '1959-03-08', '1965-03-14', '1971-03-14', '1977-03-13',
+  '1983-03-06', '1989-03-12', '1995-06-11', '2001-03-11', '2008-03-09',
+  '2014-03-23', '2020-03-15', '2026-03-15',
+]
+
 const ROW_HEIGHT = 36
 const BAR_HEIGHT = 20
 const LABEL_WIDTH = 180
@@ -153,6 +162,27 @@ export default function MandateTimeline({ mandates }: Props) {
                 {year}
               </text>
             </g>
+          )
+        })}
+
+        {/* Election date vertical lines */}
+        {ELECTION_FIRST_ROUNDS.map((dateStr) => {
+          const d = new Date(dateStr)
+          const frac = dateToFraction(d)
+          if (frac < 0 || frac > 1) return null
+          const x = LABEL_WIDTH + frac * (800 - LABEL_WIDTH - RIGHT_MARGIN)
+          return (
+            <line
+              key={dateStr}
+              x1={x}
+              y1={TOP_MARGIN}
+              x2={x}
+              y2={chartHeight - BOTTOM_MARGIN}
+              stroke="#6b7280"
+              strokeWidth={0.75}
+              strokeDasharray="4 3"
+              opacity={0.5}
+            />
           )
         })}
 
