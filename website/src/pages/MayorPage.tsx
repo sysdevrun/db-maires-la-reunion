@@ -1,7 +1,7 @@
 import { useParams, Link } from 'react-router-dom'
 import { useEffect } from 'react'
 import { getMayorByKey, getMandatesForMayor, getCityById, mayorFullName, citySlug } from '../data/loader'
-import { formatDate, computeDuration } from '../utils/format'
+import { formatDate, computeDuration, computeTotalDuration } from '../utils/format'
 import GenderBadge from '../components/GenderBadge'
 
 export default function MayorPage() {
@@ -45,7 +45,7 @@ export default function MayorPage() {
       </div>
 
       <h2 className="text-xl font-semibold text-gray-700 mb-4">
-        {mandates.length} mandat{mandates.length > 1 ? 's' : ''}
+        {mandates.length} mandat{mandates.length > 1 ? 's' : ''}, maire pendant {computeTotalDuration(mandates)}
       </h2>
 
       <div className="overflow-x-auto">
