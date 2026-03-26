@@ -10,22 +10,17 @@ export default function Stats() {
         <StatCard value={stats.totalCities} label="Communes" />
       </Link>
       <StatCard value={stats.totalMayors} label="Maires recensés" />
+      <StatCard value={stats.totalMandates} label="Mandats" />
       <StatCard value={stats.totalWomen} label="Femmes maires" />
-      <StatCard
-        value={`${stats.longestYears} ans`}
-        label={stats.longestMayor}
-        sublabel="Plus longue carrière"
-      />
     </div>
   )
 }
 
-function StatCard({ value, label, sublabel }: { value: string | number; label: string; sublabel?: string }) {
+function StatCard({ value, label }: { value: string | number; label: string }) {
   return (
     <div className="bg-gray-50 rounded-xl p-4 text-center">
       <div className="text-2xl font-bold text-blue-600">{value}</div>
-      <div className="text-sm text-gray-600 mt-1">{sublabel ?? label}</div>
-      {sublabel && <div className="text-xs text-gray-400 mt-0.5">{label}</div>}
+      <div className="text-sm text-gray-600 mt-1">{label}</div>
     </div>
   )
 }

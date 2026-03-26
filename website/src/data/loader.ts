@@ -138,6 +138,7 @@ export function searchAll(query: string): SearchResult[] {
 export function computeStats() {
   const totalCities = cities.length
   const totalMayors = mayors.length
+  const totalMandates = mandates.length
   const totalWomen = mayors.filter(m => m.gender === 'F').length
 
   const mandateDurations = new Map<string, number>()
@@ -164,9 +165,139 @@ export function computeStats() {
   return {
     totalCities,
     totalMayors,
+    totalMandates,
     totalWomen,
     longestMayor,
     longestYears: Math.round(longestYears),
     oldestMandateYear: oldestMandate.startDate.slice(0, 4),
   }
+}
+
+export interface TriviaFact {
+  value: string
+  label: string
+  sublabel?: string
+  link?: string
+}
+
+export function computeTrivia(): TriviaFact[] {
+  const facts: TriviaFact[] = []
+
+  // Longest career
+  const mandateDurations = new Map<string, number>()
+  for (const m of mandates) {
+    const start = new Date(m.startDate).getTime()
+    const end = m.endDate ? new Date(m.endDate).getTime() : Date.now()
+    const years = (end - start) / (365.25 * 24 * 60 * 60 * 1000)
+    mandateDurations.set(m.mayorName, (mandateDurations.get(m.mayorName) ?? 0) + years)
+  }
+  let longestName = ''
+  let longestYears = 0
+  for (const [name, years] of mandateDurations) {
+    if (years > longestYears) { longestName = name; longestYears = years }
+  }
+  const longestMayor = findMayorByFullName(longestName)
+  facts.push({
+    value: `${Math.round(longestYears)} ans`,
+    label: longestName,
+    sublabel: 'Plus longue carrière',
+    link: longestMayor ? `/maire/${encodeURIComponent(mayorKey(longestMayor))}` : undefined,
+  })
+
+  // Youngest mayor at election
+  let youngestAge = Infinity
+  let youngestName = ''
+  let youngestMayor: Mayor | undefined
+  for (const m of mandates) {
+    const mayor = findMayorByFullName(m.mayorName)
+    if (!mayor?.birthDate) continue
+    const birth = new Date(mayor.birthDate).getTime()
+    const start = new Date(m.startDate).getTime()
+    const age = (start - birth) / (365.25 * 24 * 60 * 60 * 1000)
+    if (age > 0 && age < youngestAge) {
+      youngestAge = age
+      youngestName = m.mayorName
+      youngestMayor = mayor
+    }
+  }
+  facts.push({
+    value: `${Math.floor(youngestAge)} ans`,
+    label: youngestName,
+    sublabel: 'Plus jeune maire élu',
+    link: youngestMayor ? `/maire/${encodeURIComponent(mayorKey(youngestMayor))}` : undefined,
+  })
+
+  // Oldest mayor at election
+  let oldestAge = 0
+  let oldestName = ''
+  let oldestMayor: Mayor | undefined
+  for (const m of mandates) {
+    const mayor = findMayorByFullName(m.mayorName)
+    if (!mayor?.birthDate) continue
+    const birth = new Date(mayor.birthDate).getTime()
+    const start = new Date(m.startDate).getTime()
+    const age = (start - birth) / (365.25 * 24 * 60 * 60 * 1000)
+    if (age > oldestAge) {
+      oldestAge = age
+      oldestName = m.mayorName
+      oldestMayor = mayor
+    }
+  }
+  facts.push({
+    value: `${Math.floor(oldestAge)} ans`,
+    label: oldestName,
+    sublabel: 'Maire le plus âgé à son élection',
+    link: oldestMayor ? `/maire/${encodeURIComponent(mayorKey(oldestMayor))}` : undefined,
+  })
+
+  // Mayor with most mandates
+  const mandateCounts = new Map<string, number>()
+  for (const m of mandates) {
+    mandateCounts.set(m.mayorName, (mandateCounts.get(m.mayorName) ?? 0) + 1)
+  }
+  let mostMandatesName = ''
+  let mostMandatesCount = 0
+  for (const [name, count] of mandateCounts) {
+    if (count > mostMandatesCount) { mostMandatesName = name; mostMandatesCount = count }
+  }
+  const mostMandatesMayor = findMayorByFullName(mostMandatesName)
+  facts.push({
+    value: `${mostMandatesCount} mandats`,
+    label: mostMandatesName,
+    sublabel: 'Plus grand nombre de mandats',
+    link: mostMandatesMayor ? `/maire/${encodeURIComponent(mayorKey(mostMandatesMayor))}` : undefined,
+  })
+
+  // City with most different mayors
+  const cityMayorSets = new Map<string, Set<string>>()
+  for (const m of mandates) {
+    if (!cityMayorSets.has(m.cityId)) cityMayorSets.set(m.cityId, new Set())
+    cityMayorSets.get(m.cityId)!.add(m.mayorName)
+  }
+  let mostMayorsCityId = ''
+  let mostMayorsCount = 0
+  for (const [cityId, mayorSet] of cityMayorSets) {
+    if (mayorSet.size > mostMayorsCount) { mostMayorsCityId = cityId; mostMayorsCount = mayorSet.size }
+  }
+  const mostMayorsCity = getCityById(mostMayorsCityId)
+  facts.push({
+    value: `${mostMayorsCount} maires`,
+    label: mostMayorsCity?.name ?? mostMayorsCityId,
+    sublabel: 'Commune avec le plus de maires',
+    link: mostMayorsCity ? `/commune/${encodeURIComponent(mostMayorsCity.name)}` : undefined,
+  })
+
+  // Oldest mandate on record
+  const oldestMandate = mandates.reduce((oldest, m) =>
+    m.startDate < oldest.startDate ? m : oldest
+  )
+  const oldestCity = getCityById(oldestMandate.cityId)
+  facts.push({
+    value: oldestMandate.startDate.slice(0, 4),
+    label: oldestMandate.mayorName,
+    sublabel: `Plus ancien mandat recensé (${oldestCity?.name ?? ''})`,
+    link: oldestCity ? `/commune/${encodeURIComponent(oldestCity.name)}` : undefined,
+  })
+
+  return facts
 }

@@ -1,5 +1,6 @@
 import SearchBar from '../components/SearchBar'
 import Stats from '../components/Stats'
+import Trivia from '../components/Trivia'
 import DownloadSection from '../components/DownloadSection'
 
 export default function HomePage() {
@@ -18,6 +19,11 @@ export default function HomePage() {
       <section className="pb-12">
         <h2 className="text-xl font-semibold text-gray-700 mb-4">En chiffres</h2>
         <Stats />
+      </section>
+
+      <section className="pb-12">
+        <h2 className="text-xl font-semibold text-gray-700 mb-4">Le saviez-vous ?</h2>
+        <Trivia />
       </section>
 
       <section className="pb-12">
