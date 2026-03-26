@@ -1,13 +1,20 @@
 import { Link } from 'react-router-dom'
+import SearchBar from './SearchBar'
 
 export default function Header() {
   return (
     <header className="bg-blue-600 text-white">
-      <div className="max-w-5xl mx-auto px-4 py-4 flex flex-col sm:flex-row items-center justify-between gap-2">
-        <Link to="/" className="text-lg font-semibold hover:text-blue-100 transition-colors">
+      <div className="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between gap-4">
+        <Link to="/" className="text-lg font-semibold hover:text-blue-100 transition-colors shrink-0">
           Maires de La Réunion
         </Link>
-        <div className="flex items-center gap-4 text-sm">
+        <div className="hidden lg:block flex-1 max-w-xs">
+          <SearchBar variant="header" />
+        </div>
+        <div className="flex items-center gap-4 text-sm shrink-0">
+          <Link to="/communes" className="hover:text-blue-100 transition-colors">
+            Communes
+          </Link>
           <Link to="/data" className="hover:text-blue-100 transition-colors">
             Télécharger
           </Link>
@@ -26,7 +33,7 @@ export default function Header() {
             href="https://www.sys-dev-run.fr/"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-blue-200 hover:text-white transition-colors"
+            className="text-blue-200 hover:text-white transition-colors hidden sm:inline"
           >
             Conçu par SysDevRun
           </a>

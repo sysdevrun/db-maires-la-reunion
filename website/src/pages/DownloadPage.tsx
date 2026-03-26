@@ -1,11 +1,8 @@
-import { Link } from 'react-router-dom'
 import DownloadSection from '../components/DownloadSection'
 
 export default function DownloadPage() {
   return (
     <div className="max-w-5xl mx-auto px-4 py-8">
-      <Link to="/" className="text-blue-600 hover:underline text-sm">&larr; Accueil</Link>
-
       <h1 className="text-3xl font-bold text-gray-800 mt-6 mb-8">Télécharger les données</h1>
 
       <DownloadSection />

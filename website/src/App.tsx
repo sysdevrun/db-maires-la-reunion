@@ -3,6 +3,7 @@ import Header from './components/Header'
 import HomePage from './pages/HomePage'
 import MayorPage from './pages/MayorPage'
 import CityPage from './pages/CityPage'
+import CitiesPage from './pages/CitiesPage'
 import DownloadPage from './pages/DownloadPage'
 
 function App() {
@@ -15,6 +16,7 @@ function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="/maire/:name" element={<MayorPage />} />
             <Route path="/commune/:name" element={<CityPage />} />
+            <Route path="/communes" element={<CitiesPage />} />
             <Route path="/data" element={<DownloadPage />} />
           </Routes>
         </main>

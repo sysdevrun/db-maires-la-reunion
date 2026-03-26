@@ -1,4 +1,5 @@
 import { useParams, Link } from 'react-router-dom'
+import { useEffect } from 'react'
 import { getCityByName, getMandatesForCity, findMayorByFullName, mayorKey } from '../data/loader'
 import { formatDate, computeDuration } from '../utils/format'
 import GenderBadge from '../components/GenderBadge'
@@ -7,6 +8,13 @@ import MandateTimeline from '../components/MandateTimeline'
 export default function CityPage() {
   const { name } = useParams<{ name: string }>()
   const city = name ? getCityByName(decodeURIComponent(name)) : undefined
+
+  useEffect(() => {
+    if (city) {
+      document.title = `${city.name} — Maires de La Réunion`
+    }
+    return () => { document.title = 'Maires de La Réunion' }
+  }, [city])
 
   if (!city) {
     return (
@@ -21,8 +29,6 @@ export default function CityPage() {
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-8">
-      <Link to="/" className="text-blue-600 hover:underline text-sm">&larr; Accueil</Link>
-
       <div className="mt-6 mb-8">
         <h1 className="text-3xl font-bold text-gray-800 mb-1">{city.name}</h1>
         <p className="text-gray-400 text-sm">Code INSEE : {city.cityId}</p>
@@ -34,7 +40,7 @@ export default function CityPage() {
       </div>
 
       <h2 className="text-xl font-semibold text-gray-700 mb-4">
-        {mandates.length} période{mandates.length > 1 ? 's' : ''} en fonction
+        {mandates.length} mandat{mandates.length > 1 ? 's' : ''}
       </h2>
 
       <div className="overflow-x-auto">

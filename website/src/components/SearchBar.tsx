@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom'
 import { searchAll, type SearchResult } from '../data/loader'
 import GenderBadge from './GenderBadge'
 
-export default function SearchBar() {
+export default function SearchBar({ variant = 'default' }: { variant?: 'default' | 'header' }) {
+  const isHeader = variant === 'header'
   const [query, setQuery] = useState('')
   const [results, setResults] = useState<SearchResult[]>([])
   const [isOpen, setIsOpen] = useState(false)
@@ -69,7 +70,10 @@ export default function SearchBar() {
         onFocus={() => results.length > 0 && setIsOpen(true)}
         onKeyDown={handleKeyDown}
         placeholder="Rechercher une commune ou un maire..."
-        className="w-full px-5 py-4 text-lg border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none transition-colors shadow-sm"
+        className={isHeader
+          ? "w-full px-3 py-2 text-sm rounded-lg bg-blue-500 text-white placeholder-blue-200 border border-blue-400 focus:bg-white focus:text-gray-800 focus:placeholder-gray-400 focus:border-blue-300 focus:outline-none transition-colors"
+          : "w-full px-5 py-4 text-lg border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none transition-colors shadow-sm"
+        }
       />
       {isOpen && (
         <div className="absolute z-50 w-full mt-2 bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden max-h-96 overflow-y-auto">

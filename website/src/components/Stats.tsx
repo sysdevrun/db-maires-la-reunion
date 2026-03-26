@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import { computeStats } from '../data/loader'
 
 const stats = computeStats()
@@ -5,7 +6,9 @@ const stats = computeStats()
 export default function Stats() {
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-      <StatCard value={stats.totalCities} label="Communes" />
+      <Link to="/communes">
+        <StatCard value={stats.totalCities} label="Communes" />
+      </Link>
       <StatCard value={stats.totalMayors} label="Maires recensés" />
       <StatCard value={stats.totalWomen} label="Femmes maires" />
       <StatCard
