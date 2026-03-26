@@ -98,6 +98,7 @@ export default function MandateTimeline({ mandates }: Props) {
     const year = new Date(dateStr).getFullYear()
     return year >= minYear && year <= maxYear
   })
+  const showEveryOther = visibleElections.length > 15
 
   function yearToFraction(year: number) {
     return (year - minYear) / (maxYear - minYear)
@@ -163,7 +164,7 @@ export default function MandateTimeline({ mandates }: Props) {
                 fontSize={11}
                 fill="#6b7280"
               >
-                {HIDDEN_LABELS.has(dateStr) ? '' : d.getFullYear()}
+                {HIDDEN_LABELS.has(dateStr) || (showEveryOther && visibleElections.indexOf(dateStr) % 2 === 0) ? '' : d.getFullYear()}
               </text>
             </g>
           )
