@@ -29,6 +29,6 @@ function copyCSVPlugin() {
 }
 
 export default defineConfig({
-  base: './',
+  base: '/',
   plugins: [react(), tailwindcss(), copyCSVPlugin()],
 })

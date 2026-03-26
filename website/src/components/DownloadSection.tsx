@@ -19,7 +19,7 @@ export default function DownloadSection() {
       {files.map(f => (
         <a
           key={f.name}
-          href={`./data/${f.name}`}
+          href={`/data/${f.name}`}
           download
           className="block bg-gray-50 hover:bg-blue-50 border border-gray-200 hover:border-blue-300 rounded-xl p-4 transition-colors group"
         >

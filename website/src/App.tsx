@@ -1,4 +1,4 @@
-import { HashRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Header from './components/Header'
 import HomePage from './pages/HomePage'
 import MayorPage from './pages/MayorPage'
@@ -8,7 +8,7 @@ import DownloadPage from './pages/DownloadPage'
 
 function App() {
   return (
-    <HashRouter>
+    <BrowserRouter>
       <div className="min-h-screen bg-white">
         <Header />
         <main>
@@ -24,7 +24,7 @@ function App() {
           Données sous licence CC0 1.0 Universal
         </footer>
       </div>
-    </HashRouter>
+    </BrowserRouter>
   )
 }
 

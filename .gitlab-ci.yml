@@ -1,0 +1,18 @@
+image: node:22-alpine
+
+pages:
+  stage: deploy
+  cache:
+    key: "$CI_COMMIT_REF_SLUG"
+    paths:
+      - website/node_modules/
+  script:
+    - cd website
+    - npm ci
+    - npm run build
+    - mv dist ../public
+  artifacts:
+    paths:
+      - public
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
