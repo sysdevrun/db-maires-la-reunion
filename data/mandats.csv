@@ -19,7 +19,6 @@ code_insee,nom_commune,nom_maire,date_debut,date_fin
 97401,Les Avirons,René Mondon,2020-03-15,2020-07-05
 97401,Les Avirons,Éric Ferrère,2020-07-05,2026-03-15
 97401,Les Avirons,Éric Ferrère,2026-03-15,
-97402,Bras-Panon,Charles Fanchin,1882-01-01,1882-01-01
 97402,Bras-Panon,Antoine Rivière de Chazalon,1882-01-01,1887-01-01
 97402,Bras-Panon,Charles Boyer de la Giroday,1887-01-01,1896-01-01
 97402,Bras-Panon,Jean Roberto,1896-01-01,1900-05-06
@@ -69,8 +68,7 @@ code_insee,nom_commune,nom_maire,date_debut,date_fin
 97404,L'Étang-Salé,Octave Bénard,1953-05-03,1959-03-08
 97404,L'Étang-Salé,Octave Bénard,1959-03-08,1961-04-12
 97404,L'Étang-Salé,Roger Payet,1961-04-13,1965-03-21
-97404,L'Étang-Salé,Roger Payet,1965-03-21,1971-03-14
-97404,L'Étang-Salé,Roger Payet,1971-03-14,1971-03-22
+97404,L'Étang-Salé,Roger Payet,1965-03-21,1971-03-22
 97404,L'Étang-Salé,Paul Dominique Payet,1971-03-22,1977-03-13
 97404,L'Étang-Salé,José Pinna,1977-03-13,1983-03-06
 97404,L'Étang-Salé,José Pinna,1983-03-06,1989-03-12
@@ -89,8 +87,7 @@ code_insee,nom_commune,nom_maire,date_debut,date_fin
 97405,Petite-Île,Armand Nativel,1959-03-08,1965-03-14
 97405,Petite-Île,Armand Nativel,1965-03-14,1971-03-14
 97405,Petite-Île,Armand Nativel,1971-03-14,1977-03-13
-97405,Petite-Île,Armand Nativel,1977-03-13,1983-03-06
-97405,Petite-Île,Armand Nativel,1983-03-06,1983-03-14
+97405,Petite-Île,Armand Nativel,1977-03-13,1983-03-14
 97405,Petite-Île,Christophe Payet,1983-03-14,1989-03-19
 97405,Petite-Île,Christophe Payet,1989-03-19,1995-06-18
 97405,Petite-Île,Christophe Payet,1995-06-18,2001-03-18
@@ -129,8 +126,7 @@ code_insee,nom_commune,nom_maire,date_debut,date_fin
 97407,Le Port,Jean-Yves Langenier,1994-03-24,1995-06-18
 97407,Le Port,Jean-Yves Langenier,1995-06-18,2001-03-18
 97407,Le Port,Jean-Yves Langenier,2001-03-18,2008-03-09
-97407,Le Port,Jean-Yves Langenier,2008-03-09,2014-03-23
-97407,Le Port,Jean-Yves Langenier,2014-03-23,2014-04-04
+97407,Le Port,Jean-Yves Langenier,2008-03-09,2014-04-04
 97407,Le Port,Olivier Hoarau,2014-04-04,2020-03-15
 97407,Le Port,Olivier Hoarau,2020-03-15,2026-03-15
 97407,Le Port,Olivier Hoarau,2026-03-15,
@@ -171,9 +167,8 @@ code_insee,nom_commune,nom_maire,date_debut,date_fin
 97409,Saint-André,Jean-Paul Virapoullé,1983-03-13,1989-03-19
 97409,Saint-André,Jean-Paul Virapoullé,1989-03-19,1995-06-11
 97409,Saint-André,Jean-Paul Virapoullé,1995-06-11,2001-03-11
-97409,Saint-André,Jean-Paul Virapoullé,2001-03-11,2008-03-09
-97409,Saint-André,Jean-Paul Virapoullé,2008-03-09,2008-03-22
-97409,Saint-André,Éric Fruteau,2008-03-22,2014-03-30
+97409,Saint-André,Jean-Paul Virapoullé,2001-03-11,2008-03-16
+97409,Saint-André,Éric Fruteau,2008-03-16,2014-03-30
 97409,Saint-André,Jean-Paul Virapoullé,2014-04-05,2020-03-15
 97409,Saint-André,Jean-Paul Virapoullé,2020-03-15,2020-07-04
 97409,Saint-André,Joé Bédier,2020-07-04,2026-03-15
@@ -196,8 +191,7 @@ code_insee,nom_commune,nom_maire,date_debut,date_fin
 97410,Saint-Benoît,Jean-Claude Fruteau,2008-03-09,2014-03-23
 97410,Saint-Benoît,Jean-Claude Fruteau,2014-03-23,2020-03-15
 97410,Saint-Benoît,Jean-Claude Fruteau,2020-03-15,2020-05-06
-97410,Saint-Benoît,Herwine Boyer-Pitou,2020-05-06,2020-06-28
-97410,Saint-Benoît,Herwine Boyer-Pitou,2020-06-28,2020-07-04
+97410,Saint-Benoît,Herwine Boyer-Pitou,2020-05-06,2020-07-04
 97410,Saint-Benoît,Patrice Selly,2020-07-04,2026-03-15
 97410,Saint-Benoît,Patrice Selly,2026-03-15,
 97411,Saint-Denis,Raymond Vergès,1945-05-31,1946-05-25
@@ -207,8 +201,7 @@ code_insee,nom_commune,nom_maire,date_debut,date_fin
 97411,Saint-Denis,Jules Olivier,1948-05-11,1953-04-26
 97411,Saint-Denis,Jules Olivier,1953-04-26,1955-06-18
 97411,Saint-Denis,Maxime Vallon-Hoarau,1955-07-01,1958-07-01
-97411,Saint-Denis,Alix Guinot,1958-07-01,1959-03-08
-97411,Saint-Denis,Alix Guinot,1959-03-08,1959-03-18
+97411,Saint-Denis,Alix Guinot,1958-07-01,1959-03-18
 97411,Saint-Denis,Gabriel Macé,1959-03-18,1960-09-27
 97411,Saint-Denis,Francis Bédier,1960-10-03,1960-11-10
 97411,Saint-Denis,Gabriel Macé,1960-11-10,1965-03-14
@@ -237,8 +230,7 @@ code_insee,nom_commune,nom_maire,date_debut,date_fin
 97412,Saint-Joseph,Guy Hoarau,1977-03-20,1983-03-13
 97412,Saint-Joseph,Guy Hoarau,1983-03-13,1989-03-19
 97412,Saint-Joseph,Fred K/Bidy,1989-03-19,1995-06-11
-97412,Saint-Joseph,Fred K/Bidy,1995-06-11,2001-03-11
-97412,Saint-Joseph,Fred K/Bidy,2001-03-11,2001-03-19
+97412,Saint-Joseph,Fred K/Bidy,1995-06-11,2001-03-19
 97412,Saint-Joseph,Patrick Lebreton,2001-03-19,2008-03-16
 97412,Saint-Joseph,Patrick Lebreton,2008-03-16,2014-03-23
 97412,Saint-Joseph,Patrick Lebreton,2014-03-23,2020-03-15
@@ -251,14 +243,12 @@ code_insee,nom_commune,nom_maire,date_debut,date_fin
 97413,Saint-Leu,Marie-Thérèse d'Armand de Chateauvieux,1965-03-14,1971-03-14
 97413,Saint-Leu,Marie-Thérèse d'Armand de Chateauvieux,1971-03-14,1977-03-13
 97413,Saint-Leu,Marie-Thérèse d'Armand de Chateauvieux,1977-03-13,1983-03-06
-97413,Saint-Leu,Mario Hoarau,1983-03-06,1989-03-12
-97413,Saint-Leu,Mario Hoarau,1989-03-12,1989-03-25
+97413,Saint-Leu,Mario Hoarau,1983-03-06,1989-03-25
 97413,Saint-Leu,Jean-Luc Poudroux,1989-03-25,1995-06-18
 97413,Saint-Leu,Jean-Luc Poudroux,1995-06-18,2001-03-11
 97413,Saint-Leu,Jean-Luc Poudroux,2001-03-11,2003-03-16
 97413,Saint-Leu,Yannick Payet,2003-03-16,2004-03-30
-97413,Saint-Leu,Jean-Luc Poudroux,2004-04-04,2008-03-09
-97413,Saint-Leu,Jean-Luc Poudroux,2008-03-09,2008-03-21
+97413,Saint-Leu,Jean-Luc Poudroux,2004-04-04,2008-03-21
 97413,Saint-Leu,Thierry Robert,2008-03-21,2014-03-23
 97413,Saint-Leu,Thierry Robert,2014-03-23,2017-09-03
 97413,Saint-Leu,Bruno Domen,2017-09-03,2020-06-28
@@ -295,8 +285,7 @@ code_insee,nom_commune,nom_maire,date_debut,date_fin
 97415,Saint-Paul,Joseph Sinimalé,1994-06-13,1995-06-18
 97415,Saint-Paul,Joseph Sinimalé,1995-06-18,1999-04-20
 97415,Saint-Paul,Alain Bénard,1999-05-16,2001-03-18
-97415,Saint-Paul,Alain Bénard,2001-03-18,2008-03-09
-97415,Saint-Paul,Alain Bénard,2008-03-09,2008-03-21
+97415,Saint-Paul,Alain Bénard,2001-03-18,2008-03-21
 97415,Saint-Paul,Huguette Bello,2008-03-21,2009-08-20
 97415,Saint-Paul,Gérard André,2009-08-20,2009-10-09
 97415,Saint-Paul,Huguette Bello,2009-10-09,2014-03-30
@@ -369,8 +358,7 @@ code_insee,nom_commune,nom_maire,date_debut,date_fin
 97419,Sainte-Rose,Raymond Poirier,1971-03-14,1974-01-01
 97419,Sainte-Rose,Alix Elma,1974-01-01,1977-03-20
 97419,Sainte-Rose,Alix Elma,1977-03-20,1983-03-06
-97419,Sainte-Rose,Ary Payet,1983-03-06,1989-03-12
-97419,Sainte-Rose,Ary Payet,1989-03-12,1989-03-20
+97419,Sainte-Rose,Ary Payet,1983-03-06,1989-03-20
 97419,Sainte-Rose,Michel Vergoz,1989-03-20,1995-06-18
 97419,Sainte-Rose,Michel Vergoz,1995-06-18,2001-03-18
 97419,Sainte-Rose,Bruno Mamindy-Pajany,2001-03-18,2008-03-16
@@ -435,8 +423,7 @@ code_insee,nom_commune,nom_maire,date_debut,date_fin
 97422,Le Tampon,Paul Badré,1959-03-15,1965-03-21
 97422,Le Tampon,Paul Badré,1965-03-21,1971-03-14
 97422,Le Tampon,Paul Badré,1971-03-14,1977-03-13
-97422,Le Tampon,Paul Badré,1977-03-13,1983-03-06
-97422,Le Tampon,Paul Badré,1983-03-06,1983-03-18
+97422,Le Tampon,Paul Badré,1977-03-13,1983-03-18
 97422,Le Tampon,André Thien Ah Koon,1983-03-18,1989-03-19
 97422,Le Tampon,André Thien Ah Koon,1989-03-19,1995-06-11
 97422,Le Tampon,André Thien Ah Koon,1995-06-11,2001-03-11
@@ -480,8 +467,7 @@ code_insee,nom_commune,nom_maire,date_debut,date_fin
 97423,Les Trois-Bassins,Daniel Pausé,2014-03-23,2020-03-15
 97423,Les Trois-Bassins,Daniel Pausé,2020-03-15,2026-03-15
 97423,Les Trois-Bassins,Daniel Pausé,2026-03-15,
-97424,Cilaos,Irénée Accot,1965-03-19,1965-03-21
-97424,Cilaos,Irénée Accot,1965-03-21,1971-03-21
+97424,Cilaos,Irénée Accot,1965-03-19,1971-03-21
 97424,Cilaos,Irénée Accot,1971-03-21,1977-03-13
 97424,Cilaos,Irénée Accot,1977-03-13,1983-03-06
 97424,Cilaos,Irénée Accot,1983-03-06,1987-11-11
