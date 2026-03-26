@@ -1,6 +1,6 @@
 ---
 name: upsert-city-mayors
-description: Accept text describing mayors of a La Réunion commune (e.g. from Wikipedia) and upsert the data into the three CSV files (cities.csv, mayors.csv, mayors_by_city.csv). Use when the user pastes or provides text about mayors of a commune.
+description: Accept text describing mayors of a La Réunion commune (e.g. from Wikipedia) and upsert the data into the three CSV files (communes.csv, maires.csv, mandats.csv). Use when the user pastes or provides text about mayors of a commune.
 argument-hint: [text describing mayors for a city]
 allowed-tools: Read, Edit, Write, Bash, Grep
 ---
@@ -18,11 +18,11 @@ You are given text (typically from Wikipedia or a similar source) describing the
 
 ## CSV file locations (relative to repo root)
 
-- `data/cities.csv` — columns: `city_id,name`
-- `data/mayors.csv` — columns: `last_name,first_name,birth_date`
-- `data/mayors_by_city.csv` — columns: `city_id,mayor_name,start_date,end_date`
+- `data/communes.csv` — columns: `code_insee,nom`
+- `data/maires.csv` — columns: `nom,prenom,date_naissance,genre`
+- `data/mandats.csv` — columns: `code_insee,nom_commune,nom_maire,date_debut,date_fin`
 
-Mayors are identified by their full name (`first_name` + space + `last_name`). The `mayor_name` column in `mayors_by_city.csv` must match exactly `first_name + " " + last_name` from `mayors.csv`.
+Mayors are identified by their full name (`prenom` + space + `nom`). The `nom_maire` column in `mandats.csv` must match exactly `prenom + " " + nom` from `maires.csv`.
 
 ## Step-by-step process
 
@@ -54,14 +54,14 @@ Mayors are identified by their full name (`first_name` + space + `last_name`). T
   - 97422: Le Tampon
   - 97423: Les Trois-Bassins
   - 97424: Cilaos
-- If the commune is not already in `data/cities.csv`, add it.
+- If the commune is not already in `data/communes.csv`, add it.
 
 ### 2. Parse mayors from the text
 
 Extract for each mayor:
-- `last_name` and `first_name`
-- `birth_date` (YYYY-MM-DD format, leave empty if unknown)
-- `start_date` and `end_date` of mandate (YYYY-MM-DD format, empty end_date = ongoing)
+- `nom` and `prenom`
+- `date_naissance` (YYYY-MM-DD format, leave empty if unknown)
+- `date_debut` and `date_fin` of mandate (YYYY-MM-DD format, empty date_fin = ongoing)
 
 Date handling:
 - If only a year is given (e.g. "1965"), use `YYYY-01-01` as approximation.
@@ -73,20 +73,20 @@ Date handling:
 
 Read all three CSV files to understand current state.
 
-### 4. Upsert mayors into `data/mayors.csv`
+### 4. Upsert mayors into `data/maires.csv`
 
 For each mayor extracted:
-- Search by `last_name` AND `first_name` (case-insensitive match).
-- If found: update `birth_date` if we now have one and the existing value is empty. Do NOT overwrite an existing birth_date.
+- Search by `nom` AND `prenom` (case-insensitive match).
+- If found: update `date_naissance` if we now have one and the existing value is empty. Do NOT overwrite an existing date_naissance.
 - If not found: add a new row.
-- Sort `mayors.csv` alphabetically by `last_name`, then `first_name`.
+- Sort `maires.csv` alphabetically by `nom`, then `prenom`.
 
-### 5. Upsert mandates into `data/mayors_by_city.csv`
+### 5. Upsert mandates into `data/mandats.csv`
 
 For each mandate extracted:
-- Build `mayor_name` as `first_name + " " + last_name` (matching exactly what's in mayors.csv).
-- Search for an existing row matching `city_id` + `mayor_name` + `start_date`.
-- If found: update `end_date` if we have new information.
+- Build `nom_maire` as `prenom + " " + nom` (matching exactly what's in maires.csv).
+- Search for an existing row matching `code_insee` + `nom_maire` + `date_debut`.
+- If found: update `date_fin` if we have new information.
 - If not found: add a new row.
 
 ### 6. Write updated files
@@ -95,9 +95,9 @@ Write the updated CSV files. Preserve:
 - UTF-8 encoding
 - No trailing whitespace
 - A final newline after the last row
-- Sort `cities.csv` by `city_id`
-- Sort `mayors.csv` by `last_name`, then `first_name`
-- Sort `mayors_by_city.csv` by `city_id`, then `start_date`
+- Sort `communes.csv` by `code_insee`
+- Sort `maires.csv` by `nom`, then `prenom`
+- Sort `mandats.csv` by `code_insee`, then `date_debut`
 
 ### 7. Validate
 
@@ -109,6 +109,6 @@ Run `python3 scripts/validate.py` and report the result. If validation fails, fi
 - If the text is ambiguous about a person's identity (same last name, different first name), treat them as different people.
 - If a same-name father/son situation arises, disambiguate by adding "(fils)" to the first name of the younger one.
 - If a mayor served multiple non-consecutive terms, create separate mandate rows.
-- Always double-check that `mayor_name` in mayors_by_city.csv matches exactly `first_name + " " + last_name` from mayors.csv.
+- Always double-check that `nom_maire` in mandats.csv matches exactly `prenom + " " + nom` from maires.csv.
 - Each mandate row should represent a single election cycle. If a mayor served continuously across multiple election cycles, create separate rows split at election first-round dates. Run `python3 scripts/split_mandates.py` after upserting to ensure proper splitting.
 - Show the user a summary of changes made (new cities, new mayors, new/updated mandates).

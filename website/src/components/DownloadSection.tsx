@@ -1,14 +1,14 @@
 const files = [
   {
-    name: 'cities.csv',
+    name: 'communes.csv',
     description: 'Liste des 24 communes de La Réunion avec leur code INSEE',
   },
   {
-    name: 'mayors.csv',
+    name: 'maires.csv',
     description: 'Liste des maires : nom, prénom, date de naissance, genre',
   },
   {
-    name: 'mayors_by_city.csv',
+    name: 'mandats.csv',
     description: 'Historique des périodes en fonction : commune, maire, dates de début et fin',
   },
 ]

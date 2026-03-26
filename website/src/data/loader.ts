@@ -1,7 +1,7 @@
 import Papa from 'papaparse'
-import citiesRaw from '../../../data/cities.csv?raw'
-import mayorsRaw from '../../../data/mayors.csv?raw'
-import mandatesRaw from '../../../data/mayors_by_city.csv?raw'
+import citiesRaw from '../../../data/communes.csv?raw'
+import mayorsRaw from '../../../data/maires.csv?raw'
+import mandatesRaw from '../../../data/mandats.csv?raw'
 
 export interface City {
   cityId: string
@@ -28,27 +28,27 @@ function parseCSV<T>(raw: string): T[] {
 }
 
 function loadCities(): City[] {
-  return parseCSV<{ city_id: string; name: string }>(citiesRaw).map(r => ({
-    cityId: r.city_id,
-    name: r.name,
+  return parseCSV<{ code_insee: string; nom: string }>(citiesRaw).map(r => ({
+    cityId: r.code_insee,
+    name: r.nom,
   }))
 }
 
 function loadMayors(): Mayor[] {
-  return parseCSV<{ last_name: string; first_name: string; birth_date: string; gender: string }>(mayorsRaw).map(r => ({
-    lastName: r.last_name,
-    firstName: r.first_name,
-    birthDate: r.birth_date || null,
-    gender: r.gender as 'M' | 'F',
+  return parseCSV<{ nom: string; prenom: string; date_naissance: string; genre: string }>(mayorsRaw).map(r => ({
+    lastName: r.nom,
+    firstName: r.prenom,
+    birthDate: r.date_naissance || null,
+    gender: r.genre as 'M' | 'F',
   }))
 }
 
 function loadMandates(): Mandate[] {
-  return parseCSV<{ city_id: string; mayor_name: string; start_date: string; end_date: string }>(mandatesRaw).map(r => ({
-    cityId: r.city_id,
-    mayorName: r.mayor_name,
-    startDate: r.start_date,
-    endDate: r.end_date?.trim() || null,
+  return parseCSV<{ code_insee: string; nom_maire: string; date_debut: string; date_fin: string }>(mandatesRaw).map(r => ({
+    cityId: r.code_insee,
+    mayorName: r.nom_maire,
+    startDate: r.date_debut,
+    endDate: r.date_fin?.trim() || null,
   }))
 }
 

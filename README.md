@@ -6,37 +6,37 @@ Données publiques sur les communes et maires de La Réunion (département 974).
 
 ## Fichiers
 
-### `data/cities.csv`
+### `data/communes.csv`
 
 Liste des 24 communes de La Réunion.
 
 | Colonne | Obligatoire | Description |
 |---------|-------------|-------------|
-| `city_id` | oui | Code INSEE de la commune (ex: `97401`) |
-| `name` | oui | Nom officiel de la commune |
+| `code_insee` | oui | Code INSEE de la commune (ex: `97401`) |
+| `nom` | oui | Nom officiel de la commune |
 
-### `data/mayors.csv`
+### `data/maires.csv`
 
 Informations biographiques des maires.
 
 | Colonne | Obligatoire | Description |
 |---------|-------------|-------------|
-| `last_name` | oui | Nom de famille |
-| `first_name` | oui | Prénom(s) |
-| `birth_date` | non | Date de naissance (`AAAA-MM-JJ`, vide si inconnue) |
-| `gender` | oui | Genre : `M` (homme), `F` (femme) |
+| `nom` | oui | Nom de famille |
+| `prenom` | oui | Prénom(s) |
+| `date_naissance` | non | Date de naissance (`AAAA-MM-JJ`, vide si inconnue) |
+| `genre` | oui | Genre : `M` (homme), `F` (femme) |
 
-### `data/mayors_by_city.csv`
+### `data/mandats.csv`
 
 Mandats de maires par commune.
 
 | Colonne | Obligatoire | Description |
 |---------|-------------|-------------|
-| `city_id` | oui | Code INSEE → `cities.csv` |
-| `city_name` | oui | Nom de la commune (dénormalisé depuis `cities.csv`) |
-| `mayor_name` | oui | Prénom + Nom → `mayors.csv` |
-| `start_date` | oui | Début du mandat (`AAAA-MM-JJ`) |
-| `end_date` | non | Fin du mandat (`AAAA-MM-JJ`, vide = en cours) |
+| `code_insee` | oui | Code INSEE → `communes.csv` |
+| `nom_commune` | oui | Nom de la commune (dénormalisé depuis `communes.csv`) |
+| `nom_maire` | oui | Prénom + Nom → `maires.csv` |
+| `date_debut` | oui | Début du mandat (`AAAA-MM-JJ`) |
+| `date_fin` | non | Fin du mandat (`AAAA-MM-JJ`, vide = en cours) |
 
 ## Validation
 

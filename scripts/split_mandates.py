@@ -9,7 +9,7 @@ from pathlib import Path
 from election_dates import ELECTIONS
 
 DATA_DIR = Path(__file__).resolve().parent.parent / "data"
-MAYORS_BY_CITY = DATA_DIR / "mayors_by_city.csv"
+MAYORS_BY_CITY = DATA_DIR / "mandats.csv"
 
 # Index elections by year for fast lookup
 _ELECTIONS_BY_YEAR = {year: (r1, r2) for year, r1, r2 in ELECTIONS}
@@ -157,31 +157,31 @@ def main():
     split_count = 0
 
     for row in rows:
-        city_id = row["city_id"]
-        mayor_name = row["mayor_name"]
-        start_d = snap_to_election(date.fromisoformat(row["start_date"]))
-        end_d = snap_to_election(date.fromisoformat(row["end_date"])) if row["end_date"] else None
+        city_id = row["code_insee"]
+        mayor_name = row["nom_maire"]
+        start_d = snap_to_election(date.fromisoformat(row["date_debut"]))
+        end_d = snap_to_election(date.fromisoformat(row["date_fin"])) if row["date_fin"] else None
 
         segments = split_mandate(start_d, end_d)
 
         if len(segments) > 1:
             split_count += 1
-            end_str = row["end_date"] or "ongoing"
-            print(f"  {city_id} {mayor_name}: {row['start_date']} -> {end_str} => {len(segments)} mandates")
+            end_str = row["date_fin"] or "ongoing"
+            print(f"  {city_id} {mayor_name}: {row['date_debut']} -> {end_str} => {len(segments)} mandates")
 
         for seg_start, seg_end in segments:
             new_rows.append({
-                "city_id": city_id,
-                "mayor_name": mayor_name,
-                "start_date": seg_start.isoformat(),
-                "end_date": seg_end.isoformat() if seg_end else "",
+                "code_insee": city_id,
+                "nom_maire": mayor_name,
+                "date_debut": seg_start.isoformat(),
+                "date_fin": seg_end.isoformat() if seg_end else "",
             })
 
-    # Sort by city_id, then start_date
-    new_rows.sort(key=lambda r: (r["city_id"], r["start_date"]))
+    # Sort by code_insee, then date_debut
+    new_rows.sort(key=lambda r: (r["code_insee"], r["date_debut"]))
 
     with open(MAYORS_BY_CITY, "w", encoding="utf-8", newline="") as f:
-        writer = csv.DictWriter(f, fieldnames=["city_id", "mayor_name", "start_date", "end_date"])
+        writer = csv.DictWriter(f, fieldnames=["code_insee", "nom_maire", "date_debut", "date_fin"])
         writer.writeheader()
         writer.writerows(new_rows)
 

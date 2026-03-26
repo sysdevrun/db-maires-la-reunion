@@ -34,17 +34,17 @@ def parse_date(value, label, row_num, errors):
 def validate_cities(rows, fieldnames):
     errors = []
 
-    expected = {"city_id", "name"}
+    expected = {"code_insee", "nom"}
     missing = expected - set(fieldnames)
     if missing:
-        errors.append(f"cities.csv: missing columns: {', '.join(sorted(missing))}")
+        errors.append(f"communes.csv: missing columns: {', '.join(sorted(missing))}")
         return errors
 
     seen_ids = set()
     seen_names = set()
     for i, row in enumerate(rows, start=2):
-        city_id = row.get("city_id", "").strip()
-        name = row.get("name", "").strip()
+        city_id = row.get("code_insee", "").strip()
+        name = row.get("nom", "").strip()
 
         if not city_id:
             errors.append(f"  Row {i}: empty city_id")
@@ -65,26 +65,26 @@ def validate_cities(rows, fieldnames):
                 seen_names.add(name_key)
 
     if errors:
-        errors.insert(0, "cities.csv:")
+        errors.insert(0, "communes.csv:")
     return errors
 
 
 def validate_mayors(rows, fieldnames):
     errors = []
 
-    expected = {"last_name", "first_name", "birth_date", "gender"}
+    expected = {"nom", "prenom", "date_naissance", "genre"}
     missing = expected - set(fieldnames)
     if missing:
-        errors.append(f"mayors.csv: missing columns: {', '.join(sorted(missing))}")
+        errors.append(f"maires.csv: missing columns: {', '.join(sorted(missing))}")
         return errors
 
     valid_genders = {"M", "F", "unknown"}
     seen_names = set()
     for i, row in enumerate(rows, start=2):
-        last_name = row.get("last_name", "").strip()
-        first_name = row.get("first_name", "").strip()
-        birth_date = row.get("birth_date", "").strip()
-        gender = row.get("gender", "").strip()
+        last_name = row.get("nom", "").strip()
+        first_name = row.get("prenom", "").strip()
+        birth_date = row.get("date_naissance", "").strip()
+        gender = row.get("genre", "").strip()
 
         if not last_name:
             errors.append(f"  Row {i}: empty last_name")
@@ -104,20 +104,20 @@ def validate_mayors(rows, fieldnames):
                 seen_names.add(name_key)
 
         if birth_date:
-            parse_date(birth_date, "birth_date", i, errors)
+            parse_date(birth_date, "date_naissance", i, errors)
 
     if errors:
-        errors.insert(0, "mayors.csv:")
+        errors.insert(0, "maires.csv:")
     return errors
 
 
 def validate_mayors_by_city(rows, fieldnames, city_ids, mayor_names, mayor_birth_dates):
     errors = []
 
-    expected = {"city_id", "mayor_name", "start_date", "end_date"}
+    expected = {"code_insee", "nom_maire", "date_debut", "date_fin"}
     missing = expected - set(fieldnames)
     if missing:
-        errors.append(f"mayors_by_city.csv: missing columns: {', '.join(sorted(missing))}")
+        errors.append(f"mandats.csv: missing columns: {', '.join(sorted(missing))}")
         return errors
 
     referenced_city_ids = set()
@@ -126,22 +126,22 @@ def validate_mayors_by_city(rows, fieldnames, city_ids, mayor_names, mayor_birth
     mandates_by_mayor = {}
 
     for i, row in enumerate(rows, start=2):
-        city_id = row.get("city_id", "").strip()
-        mayor_name = row.get("mayor_name", "").strip()
-        start_date_str = row.get("start_date", "").strip()
-        end_date_str = row.get("end_date", "").strip()
+        city_id = row.get("code_insee", "").strip()
+        mayor_name = row.get("nom_maire", "").strip()
+        start_date_str = row.get("date_debut", "").strip()
+        end_date_str = row.get("date_fin", "").strip()
 
         if not city_id:
             errors.append(f"  Row {i}: empty city_id")
         elif city_id not in city_ids:
-            errors.append(f"  Row {i}: city_id '{city_id}' not found in cities.csv")
+            errors.append(f"  Row {i}: city_id '{city_id}' not found in communes.csv")
         else:
             referenced_city_ids.add(city_id)
 
         if not mayor_name:
             errors.append(f"  Row {i}: empty mayor_name")
         elif mayor_name not in mayor_names:
-            errors.append(f"  Row {i}: mayor_name '{mayor_name}' not found in mayors.csv")
+            errors.append(f"  Row {i}: mayor_name '{mayor_name}' not found in maires.csv")
         else:
             referenced_mayor_names.add(mayor_name)
 
@@ -151,10 +151,10 @@ def validate_mayors_by_city(rows, fieldnames, city_ids, mayor_names, mayor_birth
         if not start_date_str:
             errors.append(f"  Row {i}: empty start_date")
         else:
-            start_d = parse_date(start_date_str, "start_date", i, errors)
+            start_d = parse_date(start_date_str, "date_debut", i, errors)
 
         if end_date_str:
-            end_d = parse_date(end_date_str, "end_date", i, errors)
+            end_d = parse_date(end_date_str, "date_fin", i, errors)
             if start_d and end_d and end_d < start_d:
                 errors.append(f"  Row {i}: end_date ({end_date_str}) is before start_date ({start_date_str})")
 
@@ -214,18 +214,18 @@ def validate_mayors_by_city(rows, fieldnames, city_ids, mayor_names, mayor_birth
                     f"  Mayor '{mayor_name}': age {age_at_end:.0f} at last mandate end ({last_end}), must be <= 100"
                 )
 
-    # Check orphan mayors (in mayors.csv but never referenced)
+    # Check orphan mayors (in maires.csv but never referenced)
     orphan_mayors = mayor_names - referenced_mayor_names
     if orphan_mayors:
-        errors.append(f"  Orphan mayors (in mayors.csv but not in mayors_by_city.csv): {', '.join(sorted(orphan_mayors))}")
+        errors.append(f"  Orphan mayors (in maires.csv but not in mandats.csv): {', '.join(sorted(orphan_mayors))}")
 
-    # Check orphan cities (in cities.csv but never referenced)
+    # Check orphan cities (in communes.csv but never referenced)
     orphan_cities = city_ids - referenced_city_ids
     if orphan_cities:
-        errors.append(f"  Orphan cities (in cities.csv but not in mayors_by_city.csv): {', '.join(sorted(orphan_cities))}")
+        errors.append(f"  Orphan cities (in communes.csv but not in mandats.csv): {', '.join(sorted(orphan_cities))}")
 
     if errors:
-        errors.insert(0, "mayors_by_city.csv:")
+        errors.insert(0, "mandats.csv:")
     return errors
 
 
@@ -233,37 +233,37 @@ def main():
     all_errors = []
 
     try:
-        cities, cities_fields = load_csv(DATA_DIR / "cities.csv")
+        cities, cities_fields = load_csv(DATA_DIR / "communes.csv")
     except FileNotFoundError:
-        print("ERROR: data/cities.csv not found")
+        print("ERROR: data/communes.csv not found")
         sys.exit(1)
 
     try:
-        mayors, mayors_fields = load_csv(DATA_DIR / "mayors.csv")
+        mayors, mayors_fields = load_csv(DATA_DIR / "maires.csv")
     except FileNotFoundError:
-        print("ERROR: data/mayors.csv not found")
+        print("ERROR: data/maires.csv not found")
         sys.exit(1)
 
     try:
-        mandates, mandates_fields = load_csv(DATA_DIR / "mayors_by_city.csv")
+        mandates, mandates_fields = load_csv(DATA_DIR / "mandats.csv")
     except FileNotFoundError:
-        print("ERROR: data/mayors_by_city.csv not found")
+        print("ERROR: data/mandats.csv not found")
         sys.exit(1)
 
     all_errors.extend(validate_cities(cities, cities_fields))
     all_errors.extend(validate_mayors(mayors, mayors_fields))
 
     # Build sets for referential integrity
-    city_ids = {row["city_id"].strip() for row in cities if row.get("city_id", "").strip()}
+    city_ids = {row["code_insee"].strip() for row in cities if row.get("code_insee", "").strip()}
     mayor_names = set()
     mayor_birth_dates = {}
     for row in mayors:
-        first = row.get("first_name", "").strip()
-        last = row.get("last_name", "").strip()
+        first = row.get("prenom", "").strip()
+        last = row.get("nom", "").strip()
         if first and last:
             name = f"{first} {last}"
             mayor_names.add(name)
-            bd = row.get("birth_date", "").strip()
+            bd = row.get("date_naissance", "").strip()
             if bd:
                 try:
                     mayor_birth_dates[name] = date.fromisoformat(bd)

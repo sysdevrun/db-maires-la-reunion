@@ -14,27 +14,27 @@ def load_csv(filepath):
 
 
 def main():
-    cities_rows = load_csv(DATA_DIR / "cities.csv")
-    mayors_rows = load_csv(DATA_DIR / "mayors.csv")
-    mandates_rows = load_csv(DATA_DIR / "mayors_by_city.csv")
+    cities_rows = load_csv(DATA_DIR / "communes.csv")
+    mayors_rows = load_csv(DATA_DIR / "maires.csv")
+    mandates_rows = load_csv(DATA_DIR / "mandats.csv")
 
-    cities = {row["city_id"]: row["name"] for row in cities_rows}
+    cities = {row["code_insee"]: row["nom"] for row in cities_rows}
 
     # Mayors with no birthdate
     no_birthdate = set()
     for row in mayors_rows:
-        if not row.get("birth_date", "").strip():
-            name = f"{row['first_name']} {row['last_name']}"
+        if not row.get("date_naissance", "").strip():
+            name = f"{row['prenom']} {row['nom']}"
             no_birthdate.add(name)
 
     # Find earliest mandate per mayor
     earliest = {}
     for row in mandates_rows:
-        mayor = row["mayor_name"]
+        mayor = row["nom_maire"]
         if mayor not in no_birthdate:
             continue
-        start = date.fromisoformat(row["start_date"])
-        city = cities.get(row["city_id"], row["city_id"])
+        start = date.fromisoformat(row["date_debut"])
+        city = cities.get(row["code_insee"], row["code_insee"])
         if mayor not in earliest or start < earliest[mayor][1]:
             earliest[mayor] = (city, start)
 

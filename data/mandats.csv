@@ -1,4 +1,4 @@
-city_id,city_name,mayor_name,start_date,end_date
+code_insee,nom_commune,nom_maire,date_debut,date_fin
 97401,Les Avirons,Adrien Cadet,1943-01-01,1945-05-13
 97401,Les Avirons,Adrien Cadet,1945-05-13,1947-10-26
 97401,Les Avirons,Adrien Cadet,1947-10-26,1953-04-26
