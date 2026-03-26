@@ -24,7 +24,7 @@ Informations biographiques des maires.
 | `last_name` | oui | Nom de famille |
 | `first_name` | oui | Prénom(s) |
 | `birth_date` | non | Date de naissance (`AAAA-MM-JJ`, vide si inconnue) |
-| `gender` | oui | Genre : `M` (homme), `F` (femme) ou `unknown` (inconnu) |
+| `gender` | oui | Genre : `M` (homme), `F` (femme) |
 
 ### `data/mayors_by_city.csv`
 
@@ -33,6 +33,7 @@ Mandats de maires par commune.
 | Colonne | Obligatoire | Description |
 |---------|-------------|-------------|
 | `city_id` | oui | Code INSEE → `cities.csv` |
+| `city_name` | oui | Nom de la commune (dénormalisé depuis `cities.csv`) |
 | `mayor_name` | oui | Prénom + Nom → `mayors.csv` |
 | `start_date` | oui | Début du mandat (`AAAA-MM-JJ`) |
 | `end_date` | non | Fin du mandat (`AAAA-MM-JJ`, vide = en cours) |
