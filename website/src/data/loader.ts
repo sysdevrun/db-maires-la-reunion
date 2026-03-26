@@ -1,3 +1,4 @@
+import Papa from 'papaparse'
 import citiesRaw from '../../../data/cities.csv?raw'
 import mayorsRaw from '../../../data/mayors.csv?raw'
 import mandatesRaw from '../../../data/mayors_by_city.csv?raw'
@@ -21,49 +22,33 @@ export interface Mandate {
   endDate: string | null
 }
 
-function parseCSV(raw: string): string[][] {
-  const lines = raw.trim().replace(/\r/g, '').split('\n')
-  return lines.map(line => {
-    const fields: string[] = []
-    let current = ''
-    let inQuotes = false
-    for (const ch of line) {
-      if (ch === '"') {
-        inQuotes = !inQuotes
-      } else if (ch === ',' && !inQuotes) {
-        fields.push(current)
-        current = ''
-      } else {
-        current += ch
-      }
-    }
-    fields.push(current)
-    return fields
-  })
+function parseCSV<T>(raw: string): T[] {
+  const result = Papa.parse<T>(raw.trim(), { header: true, skipEmptyLines: true })
+  return result.data
 }
 
 function loadCities(): City[] {
-  const rows = parseCSV(citiesRaw)
-  return rows.slice(1).map(([cityId, name]) => ({ cityId, name }))
+  return parseCSV<{ city_id: string; name: string }>(citiesRaw).map(r => ({
+    cityId: r.city_id,
+    name: r.name,
+  }))
 }
 
 function loadMayors(): Mayor[] {
-  const rows = parseCSV(mayorsRaw)
-  return rows.slice(1).map(([lastName, firstName, birthDate, gender]) => ({
-    lastName,
-    firstName,
-    birthDate: birthDate || null,
-    gender: gender as 'M' | 'F',
+  return parseCSV<{ last_name: string; first_name: string; birth_date: string; gender: string }>(mayorsRaw).map(r => ({
+    lastName: r.last_name,
+    firstName: r.first_name,
+    birthDate: r.birth_date || null,
+    gender: r.gender as 'M' | 'F',
   }))
 }
 
 function loadMandates(): Mandate[] {
-  const rows = parseCSV(mandatesRaw)
-  return rows.slice(1).map(([cityId, mayorName, startDate, endDate]) => ({
-    cityId,
-    mayorName,
-    startDate,
-    endDate: endDate?.trim() || null,
+  return parseCSV<{ city_id: string; mayor_name: string; start_date: string; end_date: string }>(mandatesRaw).map(r => ({
+    cityId: r.city_id,
+    mayorName: r.mayor_name,
+    startDate: r.start_date,
+    endDate: r.end_date?.trim() || null,
   }))
 }
 
