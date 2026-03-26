@@ -26,12 +26,12 @@ export default function DownloadPage() {
         <p className="text-gray-600">
           Les contributions sont les bienvenues sur le{' '}
           <a
-            href="https://github.com/sysdevrun/db-maires-la-reunion"
+            href="https://gitlab.com/sysdevrun/maires-la-reunion"
             target="_blank"
             rel="noopener noreferrer"
             className="text-blue-600 hover:underline"
           >
-            dépôt GitHub
+            dépôt GitLab
           </a>
           . Vous pouvez également signaler une erreur en contactant{' '}
           <strong>Théophile Helleboid</strong> à l'adresse{' '}

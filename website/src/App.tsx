@@ -1,4 +1,6 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
+import { useEffect } from 'react'
+import ReactGA from 'react-ga4'
 import Header from './components/Header'
 import HomePage from './pages/HomePage'
 import MayorPage from './pages/MayorPage'
@@ -6,10 +8,21 @@ import CityPage from './pages/CityPage'
 import CitiesPage from './pages/CitiesPage'
 import DownloadPage from './pages/DownloadPage'
 
+ReactGA.initialize('G-Q4KFC1R491')
+
+function PageTracker() {
+  const location = useLocation()
+  useEffect(() => {
+    ReactGA.send({ hitType: 'pageview', page: location.pathname + location.search })
+  }, [location])
+  return null
+}
+
 function App() {
   return (
     <BrowserRouter>
       <div className="min-h-screen bg-white">
+        <PageTracker />
         <Header />
         <main>
           <Routes>
