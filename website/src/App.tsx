@@ -7,6 +7,7 @@ import MayorPage from './pages/MayorPage'
 import CityPage from './pages/CityPage'
 import CitiesPage from './pages/CitiesPage'
 import DownloadPage from './pages/DownloadPage'
+import FrisePage from './pages/FrisePage'
 
 ReactGA.initialize('G-Q4KFC1R491')
 
@@ -30,6 +31,7 @@ function App() {
             <Route path="/maire/:name" element={<MayorPage />} />
             <Route path="/commune/:name" element={<CityPage />} />
             <Route path="/communes" element={<CitiesPage />} />
+            <Route path="/frise" element={<FrisePage />} />
             <Route path="/data" element={<DownloadPage />} />
           </Routes>
         </main>

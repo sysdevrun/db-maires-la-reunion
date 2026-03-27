@@ -12,6 +12,9 @@ export default function Header() {
           <SearchBar variant="header" />
         </div>
         <div className="flex items-center gap-4 text-sm shrink-0">
+          <Link to="/frise" className="hover:text-blue-100 transition-colors">
+            Frise
+          </Link>
           <Link to="/communes" className="hover:text-blue-100 transition-colors">
             Communes
           </Link>
