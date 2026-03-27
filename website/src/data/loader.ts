@@ -2,10 +2,18 @@ import Papa from 'papaparse'
 import citiesRaw from '../../../data/communes.csv?raw'
 import mayorsRaw from '../../../data/maires.csv?raw'
 import mandatesRaw from '../../../data/mandats.csv?raw'
+import intercosRaw from '../../../data/intercommunalites.csv?raw'
+
+export interface Intercommunalite {
+  siren: string
+  name: string
+  shortName: string
+}
 
 export interface City {
   cityId: string
   name: string
+  interco: string
 }
 
 export interface Mayor {
@@ -27,10 +35,19 @@ function parseCSV<T>(raw: string): T[] {
   return result.data
 }
 
+function loadIntercommunalites(): Intercommunalite[] {
+  return parseCSV<{ siren: string; nom: string; nom_court: string }>(intercosRaw).map(r => ({
+    siren: r.siren,
+    name: r.nom,
+    shortName: r.nom_court,
+  }))
+}
+
 function loadCities(): City[] {
-  return parseCSV<{ code_insee: string; nom: string }>(citiesRaw).map(r => ({
+  return parseCSV<{ code_insee: string; nom: string; interco: string }>(citiesRaw).map(r => ({
     cityId: r.code_insee,
     name: r.nom,
+    interco: r.interco,
   }))
 }
 
@@ -52,13 +69,23 @@ function loadMandates(): Mandate[] {
   }))
 }
 
+export const intercommunalites = loadIntercommunalites()
 export const cities = loadCities()
 export const mayors = loadMayors()
 export const mandates = loadMandates()
 
+const intercoByShortName = new Map(intercommunalites.map(i => [i.shortName, i]))
 const cityByName = new Map(cities.map(c => [c.name, c]))
 const cityBySlug = new Map(cities.map(c => [citySlug(c.name), c]))
 const cityById = new Map(cities.map(c => [c.cityId, c]))
+
+export function getIntercoByShortName(shortName: string): Intercommunalite | undefined {
+  return intercoByShortName.get(shortName)
+}
+
+export function getCitiesByInterco(shortName: string): City[] {
+  return cities.filter(c => c.interco === shortName)
+}
 
 export function getCityByName(name: string): City | undefined {
   return cityByName.get(name)

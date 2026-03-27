@@ -1,25 +1,25 @@
-code_insee,nom
-97401,Les Avirons
-97402,Bras-Panon
-97403,Entre-Deux
-97404,L'Étang-Salé
-97405,Petite-Île
-97406,La Plaine-des-Palmistes
-97407,Le Port
-97408,La Possession
-97409,Saint-André
-97410,Saint-Benoît
-97411,Saint-Denis
-97412,Saint-Joseph
-97413,Saint-Leu
-97414,Saint-Louis
-97415,Saint-Paul
-97416,Saint-Philippe
-97417,Saint-Pierre
-97418,Sainte-Marie
-97419,Sainte-Rose
-97420,Sainte-Suzanne
-97421,Salazie
-97422,Le Tampon
-97423,Les Trois-Bassins
-97424,Cilaos
+code_insee,nom,interco
+97401,Les Avirons,CIVIS
+97402,Bras-Panon,CIREST
+97403,Entre-Deux,CASUD
+97404,L'Étang-Salé,CIVIS
+97405,Petite-Île,CIVIS
+97406,La Plaine-des-Palmistes,CIREST
+97407,Le Port,TO
+97408,La Possession,TO
+97409,Saint-André,CIREST
+97410,Saint-Benoît,CIREST
+97411,Saint-Denis,CINOR
+97412,Saint-Joseph,CASUD
+97413,Saint-Leu,TO
+97414,Saint-Louis,CIVIS
+97415,Saint-Paul,TO
+97416,Saint-Philippe,CASUD
+97417,Saint-Pierre,CIVIS
+97418,Sainte-Marie,CINOR
+97419,Sainte-Rose,CIREST
+97420,Sainte-Suzanne,CINOR
+97421,Salazie,CIREST
+97422,Le Tampon,CASUD
+97423,Les Trois-Bassins,TO
+97424,Cilaos,CIVIS

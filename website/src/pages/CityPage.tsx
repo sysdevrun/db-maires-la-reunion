@@ -1,6 +1,6 @@
 import { useParams, Link } from 'react-router-dom'
 import { useEffect } from 'react'
-import { getCityBySlug, getMandatesForCity, findMayorByFullName, mayorSlug } from '../data/loader'
+import { getCityBySlug, getMandatesForCity, findMayorByFullName, mayorSlug, getIntercoByShortName } from '../data/loader'
 import { formatDate, computeDuration } from '../utils/format'
 import GenderBadge from '../components/GenderBadge'
 import MandateTimeline from '../components/MandateTimeline'
@@ -8,6 +8,7 @@ import MandateTimeline from '../components/MandateTimeline'
 export default function CityPage() {
   const { name } = useParams<{ name: string }>()
   const city = name ? getCityBySlug(name) : undefined
+  const interco = city ? getIntercoByShortName(city.interco) : undefined
 
   useEffect(() => {
     if (city) {
@@ -32,6 +33,9 @@ export default function CityPage() {
       <div className="mt-6 mb-8">
         <h1 className="text-3xl font-bold text-gray-800 mb-1">{city.name}</h1>
         <p className="text-gray-400 text-sm">Code INSEE : {city.cityId}</p>
+        {interco && (
+          <p className="text-gray-400 text-sm">Intercommunalité : {interco.shortName}</p>
+        )}
       </div>
 
       <h2 className="text-xl font-semibold text-gray-700 mb-4">Chronologie des maires</h2>

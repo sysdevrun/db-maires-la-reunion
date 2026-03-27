@@ -14,6 +14,17 @@ Liste des 24 communes de La Réunion.
 |---------|-------------|-------------|
 | `code_insee` | oui | Code INSEE de la commune (ex: `97401`) |
 | `nom` | oui | Nom officiel de la commune |
+| `interco` | oui | Nom court de l'intercommunalité → `intercommunalites.csv` |
+
+### `data/intercommunalites.csv`
+
+Les 5 intercommunalités (EPCI) de La Réunion.
+
+| Colonne | Obligatoire | Description |
+|---------|-------------|-------------|
+| `siren` | oui | Numéro SIREN de l'intercommunalité |
+| `nom` | oui | Nom officiel complet |
+| `nom_court` | oui | Nom court (ex: `CIVIS`, `TO`, `CINOR`) |
 
 ### `data/maires.csv`
 

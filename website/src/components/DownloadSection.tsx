@@ -1,7 +1,7 @@
 const files = [
   {
     name: 'communes.csv',
-    description: 'Liste des 24 communes de La Réunion avec leur code INSEE',
+    description: 'Liste des 24 communes de La Réunion avec leur code INSEE et intercommunalité',
   },
   {
     name: 'maires.csv',
@@ -10,6 +10,10 @@ const files = [
   {
     name: 'mandats.csv',
     description: 'Historique des périodes en fonction : commune, maire, dates de début et fin',
+  },
+  {
+    name: 'intercommunalites.csv',
+    description: 'Les 5 intercommunalités : SIREN, nom officiel, nom court',
   },
 ]
 

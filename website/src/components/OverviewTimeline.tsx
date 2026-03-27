@@ -2,8 +2,10 @@ import { useState, useRef, useMemo, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import {
   cities,
+  intercommunalites,
   mandates,
   getMandatesForCity,
+  getCitiesByInterco,
   citySlug,
   type Mandate,
 } from '../data/loader'
@@ -14,6 +16,7 @@ const ROW_HEIGHT = 36
 const BAR_HEIGHT = 28
 const TOP_MARGIN = 24
 const BOTTOM_MARGIN = 30
+const GROUP_HEADER_HEIGHT = 32
 const CHART_WIDTH = 1600
 
 interface MandateEntry {
@@ -70,6 +73,11 @@ interface CommuneRow {
   colors: string[]
 }
 
+interface GroupedRows {
+  intercoShortName: string
+  rows: CommuneRow[]
+}
+
 export default function OverviewTimeline() {
   const [tooltip, setTooltip] = useState<TooltipState | null>(null)
   const containerRef = useRef<HTMLDivElement>(null)
@@ -85,29 +93,38 @@ export default function OverviewTimeline() {
     return earliest
   }, [])
 
-  const rows: CommuneRow[] = useMemo(() => {
-    const sorted = [...cities].sort((a, b) => a.name.localeCompare(b.name, 'fr'))
-    return sorted.map((city, cityIndex) => {
-      const cityMandates = getMandatesForCity(city.cityId)
-        .sort(
-          (a, b) =>
-            new Date(a.startDate).getTime() - new Date(b.startDate).getTime()
-        )
+  const groups: GroupedRows[] = useMemo(() => {
+    let globalCityIndex = 0
+    return intercommunalites.map((interco) => {
+      const interCities = getCitiesByInterco(interco.shortName)
+        .sort((a, b) => a.name.localeCompare(b.name, 'fr'))
 
-      const blocks = mergeConsecutiveMandates(cityMandates)
-      const blockNames = blocks.map((b) => b.mayorName)
-      const colors = assignColorsForCity(cityIndex, blockNames)
+      const rows: CommuneRow[] = interCities.map((city) => {
+        const cityIndex = globalCityIndex++
+        const cityMandates = getMandatesForCity(city.cityId)
+          .sort(
+            (a, b) =>
+              new Date(a.startDate).getTime() - new Date(b.startDate).getTime()
+          )
 
-      return {
-        cityName: city.name,
-        citySlug: citySlug(city.name),
-        blocks,
-        colors,
-      }
+        const blocks = mergeConsecutiveMandates(cityMandates)
+        const blockNames = blocks.map((b) => b.mayorName)
+        const colors = assignColorsForCity(cityIndex, blockNames)
+
+        return {
+          cityName: city.name,
+          citySlug: citySlug(city.name),
+          blocks,
+          colors,
+        }
+      })
+
+      return { intercoShortName: interco.shortName, rows }
     })
   }, [])
 
-  const totalHeight = rows.length * ROW_HEIGHT + TOP_MARGIN + BOTTOM_MARGIN
+  const totalRows = cities.length
+  const totalHeight = totalRows * ROW_HEIGHT + groups.length * GROUP_HEADER_HEIGHT + TOP_MARGIN + BOTTOM_MARGIN
 
   function yearToX(year: number): number {
     return ((year - startYear) / (END_YEAR - startYear)) * CHART_WIDTH
@@ -151,23 +168,49 @@ export default function OverviewTimeline() {
     return parts.length > 1 ? parts.slice(1).join(' ') : fullName
   }
 
+  // Precompute y positions for each group and row
+  const groupPositions: { groupY: number; rowYs: number[] }[] = []
+  let currentY = TOP_MARGIN
+  for (const group of groups) {
+    const groupY = currentY
+    currentY += GROUP_HEADER_HEIGHT
+    const rowYs: number[] = []
+    for (let i = 0; i < group.rows.length; i++) {
+      rowYs.push(currentY)
+      currentY += ROW_HEIGHT
+    }
+    groupPositions.push({ groupY, rowYs })
+  }
+
   return (
     <div className="flex" ref={containerRef} style={{ position: 'relative' }}>
       {/* Fixed commune name column */}
       <div className="shrink-0 z-10 bg-white">
         <div style={{ height: TOP_MARGIN }} />
-        {rows.map((row) => (
-          <div
-            key={row.cityName}
-            style={{ height: ROW_HEIGHT }}
-            className="flex items-center pr-3 justify-end"
-          >
-            <Link
-              to={`/commune/${row.citySlug}`}
-              className="text-gray-600 text-xs hover:text-blue-600 transition-colors text-right whitespace-nowrap"
+        {groups.map((group, gi) => (
+          <div key={group.intercoShortName}>
+            <div
+              style={{ height: GROUP_HEADER_HEIGHT }}
+              className="flex items-end pr-3 justify-end"
             >
-              {row.cityName}
-            </Link>
+              <span className="text-xs font-bold text-gray-400 uppercase tracking-wide">
+                {group.intercoShortName}
+              </span>
+            </div>
+            {group.rows.map((row) => (
+              <div
+                key={row.cityName}
+                style={{ height: ROW_HEIGHT }}
+                className="flex items-center pr-3 justify-end"
+              >
+                <Link
+                  to={`/commune/${row.citySlug}`}
+                  className="text-gray-600 text-xs hover:text-blue-600 transition-colors text-right whitespace-nowrap"
+                >
+                  {row.cityName}
+                </Link>
+              </div>
+            ))}
           </div>
         ))}
       </div>
@@ -205,78 +248,96 @@ export default function OverviewTimeline() {
             )
           })}
 
-          {/* Rows */}
-          {rows.map((row, rowIndex) => {
-            const y = TOP_MARGIN + rowIndex * ROW_HEIGHT
-            const barY = y + (ROW_HEIGHT - BAR_HEIGHT) / 2
-
+          {/* Groups and rows */}
+          {groups.map((group, gi) => {
+            const { groupY, rowYs } = groupPositions[gi]
             return (
-              <g key={row.cityName}>
-                {/* Subtle row separator */}
+              <g key={group.intercoShortName}>
+                {/* Group separator line */}
                 <line
                   x1={0}
-                  y1={y + ROW_HEIGHT}
+                  y1={groupY + GROUP_HEADER_HEIGHT}
                   x2={CHART_WIDTH}
-                  y2={y + ROW_HEIGHT}
-                  stroke="#f3f4f6"
+                  y2={groupY + GROUP_HEADER_HEIGHT}
+                  stroke="#d1d5db"
                   strokeWidth={0.5}
                 />
 
-                {/* Merged mandate blocks */}
-                {row.blocks.map((block, i) => {
-                  const now = new Date()
-                  const startD = new Date(
-                    Math.max(
-                      new Date(block.overallStart).getTime(),
-                      new Date(`${startYear}-01-01`).getTime()
-                    )
-                  )
-                  const endD = block.overallEnd ? new Date(block.overallEnd) : now
-                  const x1 = dateToX(startD)
-                  const x2 = dateToX(endD)
-                  const width = Math.max(x2 - x1, 2)
-                  const color = row.colors[i] ?? '#94a3b8'
-
-                  const name = lastName(block.mayorName)
-                  const showName = width > 30
-
-                  // Truncate name if needed
-                  const charWidth = 5.5
-                  const maxChars = Math.floor((width - 6) / charWidth)
-                  const displayName =
-                    showName && name.length > maxChars && maxChars > 2
-                      ? name.slice(0, maxChars - 1) + '.'
-                      : name
+                {/* Commune rows */}
+                {group.rows.map((row, rowIndex) => {
+                  const y = rowYs[rowIndex]
+                  const barY = y + (ROW_HEIGHT - BAR_HEIGHT) / 2
 
                   return (
-                    <g
-                      key={i}
-                      style={{ cursor: 'pointer' }}
-                      onMouseMove={(e) => showTooltip(e, block, row.cityName)}
-                      onMouseLeave={hideTooltip}
-                    >
-                      <rect
-                        x={x1}
-                        y={barY}
-                        width={width}
-                        height={BAR_HEIGHT}
-                        fill={color}
-                        rx={3}
-                        ry={3}
+                    <g key={row.cityName}>
+                      {/* Subtle row separator */}
+                      <line
+                        x1={0}
+                        y1={y + ROW_HEIGHT}
+                        x2={CHART_WIDTH}
+                        y2={y + ROW_HEIGHT}
+                        stroke="#f3f4f6"
+                        strokeWidth={0.5}
                       />
-                      {showName && (
-                        <text
-                          x={x1 + width / 2}
-                          y={barY + BAR_HEIGHT / 2 + 1}
-                          textAnchor="middle"
-                          dominantBaseline="central"
-                          fontSize={9}
-                          fontWeight={600}
-                          fill="white"
-                        >
-                          {displayName}
-                        </text>
-                      )}
+
+                      {/* Merged mandate blocks */}
+                      {row.blocks.map((block, i) => {
+                        const now = new Date()
+                        const startD = new Date(
+                          Math.max(
+                            new Date(block.overallStart).getTime(),
+                            new Date(`${startYear}-01-01`).getTime()
+                          )
+                        )
+                        const endD = block.overallEnd ? new Date(block.overallEnd) : now
+                        const x1 = dateToX(startD)
+                        const x2 = dateToX(endD)
+                        const width = Math.max(x2 - x1, 2)
+                        const color = row.colors[i] ?? '#94a3b8'
+
+                        const name = lastName(block.mayorName)
+                        const showName = width > 30
+
+                        // Truncate name if needed
+                        const charWidth = 5.5
+                        const maxChars = Math.floor((width - 6) / charWidth)
+                        const displayName =
+                          showName && name.length > maxChars && maxChars > 2
+                            ? name.slice(0, maxChars - 1) + '.'
+                            : name
+
+                        return (
+                          <g
+                            key={i}
+                            style={{ cursor: 'pointer' }}
+                            onMouseMove={(e) => showTooltip(e, block, row.cityName)}
+                            onMouseLeave={hideTooltip}
+                          >
+                            <rect
+                              x={x1}
+                              y={barY}
+                              width={width}
+                              height={BAR_HEIGHT}
+                              fill={color}
+                              rx={3}
+                              ry={3}
+                            />
+                            {showName && (
+                              <text
+                                x={x1 + width / 2}
+                                y={barY + BAR_HEIGHT / 2 + 1}
+                                textAnchor="middle"
+                                dominantBaseline="central"
+                                fontSize={9}
+                                fontWeight={600}
+                                fill="white"
+                              >
+                                {displayName}
+                              </text>
+                            )}
+                          </g>
+                        )
+                      })}
                     </g>
                   )
                 })}

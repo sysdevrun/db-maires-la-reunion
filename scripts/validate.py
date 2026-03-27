@@ -31,10 +31,48 @@ def parse_date(value, label, row_num, errors):
         return None
 
 
-def validate_cities(rows, fieldnames):
+def validate_intercommunalites(rows, fieldnames):
     errors = []
 
-    expected = {"code_insee", "nom"}
+    expected = {"siren", "nom", "nom_court"}
+    missing = expected - set(fieldnames)
+    if missing:
+        errors.append(f"intercommunalites.csv: missing columns: {', '.join(sorted(missing))}")
+        return errors
+
+    seen_sirens = set()
+    seen_short_names = set()
+    for i, row in enumerate(rows, start=2):
+        siren = row.get("siren", "").strip()
+        nom = row.get("nom", "").strip()
+        nom_court = row.get("nom_court", "").strip()
+
+        if not siren:
+            errors.append(f"  Row {i}: empty siren")
+        elif siren in seen_sirens:
+            errors.append(f"  Row {i}: duplicate siren '{siren}'")
+        else:
+            seen_sirens.add(siren)
+
+        if not nom:
+            errors.append(f"  Row {i}: empty nom")
+
+        if not nom_court:
+            errors.append(f"  Row {i}: empty nom_court")
+        elif nom_court in seen_short_names:
+            errors.append(f"  Row {i}: duplicate nom_court '{nom_court}'")
+        else:
+            seen_short_names.add(nom_court)
+
+    if errors:
+        errors.insert(0, "intercommunalites.csv:")
+    return errors
+
+
+def validate_cities(rows, fieldnames, interco_short_names):
+    errors = []
+
+    expected = {"code_insee", "nom", "interco"}
     missing = expected - set(fieldnames)
     if missing:
         errors.append(f"communes.csv: missing columns: {', '.join(sorted(missing))}")
@@ -42,9 +80,11 @@ def validate_cities(rows, fieldnames):
 
     seen_ids = set()
     seen_names = set()
+    referenced_intercos = set()
     for i, row in enumerate(rows, start=2):
         city_id = row.get("code_insee", "").strip()
         name = row.get("nom", "").strip()
+        interco = row.get("interco", "").strip()
 
         if not city_id:
             errors.append(f"  Row {i}: empty city_id")
@@ -63,6 +103,18 @@ def validate_cities(rows, fieldnames):
                 errors.append(f"  Row {i}: duplicate city name '{name}'")
             else:
                 seen_names.add(name_key)
+
+        if not interco:
+            errors.append(f"  Row {i}: empty interco")
+        elif interco not in interco_short_names:
+            errors.append(f"  Row {i}: interco '{interco}' not found in intercommunalites.csv")
+        else:
+            referenced_intercos.add(interco)
+
+    # Check orphan intercommunalités
+    orphan_intercos = interco_short_names - referenced_intercos
+    if orphan_intercos:
+        errors.append(f"  Orphan intercommunalités (in intercommunalites.csv but not in communes.csv): {', '.join(sorted(orphan_intercos))}")
 
     if errors:
         errors.insert(0, "communes.csv:")
@@ -233,6 +285,12 @@ def main():
     all_errors = []
 
     try:
+        intercos, intercos_fields = load_csv(DATA_DIR / "intercommunalites.csv")
+    except FileNotFoundError:
+        print("ERROR: data/intercommunalites.csv not found")
+        sys.exit(1)
+
+    try:
         cities, cities_fields = load_csv(DATA_DIR / "communes.csv")
     except FileNotFoundError:
         print("ERROR: data/communes.csv not found")
@@ -250,7 +308,12 @@ def main():
         print("ERROR: data/mandats.csv not found")
         sys.exit(1)
 
-    all_errors.extend(validate_cities(cities, cities_fields))
+    all_errors.extend(validate_intercommunalites(intercos, intercos_fields))
+
+    # Build interco short names set for cross-reference
+    interco_short_names = {row["nom_court"].strip() for row in intercos if row.get("nom_court", "").strip()}
+
+    all_errors.extend(validate_cities(cities, cities_fields, interco_short_names))
     all_errors.extend(validate_mayors(mayors, mayors_fields))
 
     # Build sets for referential integrity
@@ -279,7 +342,7 @@ def main():
         print(f"\n{sum(1 for e in all_errors if not e.endswith(':'))} error(s) found.")
         sys.exit(1)
     else:
-        print(f"All checks passed. ({len(cities)} cities, {len(mayors)} mayors, {len(mandates)} mandates)")
+        print(f"All checks passed. ({len(intercos)} intercommunalités, {len(cities)} cities, {len(mayors)} mayors, {len(mandates)} mandates)")
         sys.exit(0)
 
 
