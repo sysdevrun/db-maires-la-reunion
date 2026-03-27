@@ -187,7 +187,7 @@ export default function OverviewTimeline() {
       {/* Fixed commune name column */}
       <div className="shrink-0 z-10 bg-white">
         <div style={{ height: TOP_MARGIN }} />
-        {groups.map((group, gi) => (
+        {groups.map((group) => (
           <div key={group.intercoShortName}>
             <div
               style={{ height: GROUP_HEADER_HEIGHT }}
