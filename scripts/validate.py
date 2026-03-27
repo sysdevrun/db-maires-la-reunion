@@ -234,13 +234,15 @@ def validate_mayors_by_city(rows, fieldnames, city_ids, mayor_names, mayor_birth
                     f"({prev_start} - {prev_end or 'ongoing'} vs {curr_start} - {curr_end or 'ongoing'})"
                 )
 
-    # Check that no mandate spans an entire election (both rounds inside it)
+    # Check that no mandate spans an entire election (both rounds inside it),
+    # allowing a grace period for the outgoing mayor to stay until installation.
+    install_grace_days = 10
     for city_id, mandates in mandates_by_city.items():
         for start_d, end_d, row_num in mandates:
             if end_d is None:
                 continue
             for year, r1, r2 in ELECTIONS:
-                if start_d < r1 and r2 < end_d:
+                if start_d < r1 and (end_d - r2).days > install_grace_days:
                     errors.append(
                         f"  Row {row_num}: mandate in city '{city_id}' ({start_d} - {end_d}) "
                         f"spans entire {year} election ({r1} - {r2})"
